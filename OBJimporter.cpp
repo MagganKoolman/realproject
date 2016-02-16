@@ -7,6 +7,19 @@
 
 using namespace std;
 
+std::string replace(std::string str, char a, char b) {
+	std::string result = "";
+	for (int i = 0; i < str.length(); i++) {
+		if (str[i] == a) {
+			result.push_back(b);
+		}
+		else {
+			result.push_back(str[i]);
+		}
+	}
+	return result;
+}
+
 OBJimporter::OBJimporter() {
 	this->standardMat= { vec3(1,0,0),vec3(0,1,0),vec3(0,0,1), "standardMaterial", 0 };
 	objectOffset = 0;
@@ -135,7 +148,10 @@ void OBJimporter::loadObj(string fileName) {
 			textureCoords.push_back(t);
 		}
 		else if (line == "f ") {
-			sscanf_s(input.c_str(), "%s %i/%i/%i %i/%i/%i %i/%i/%i", specialChar, &f.v[0], &f.t[0], &f.n[0], &f.v[1], &f.t[1], &f.n[1], &f.v[2], &f.t[2], &f.n[2]);
+			inputString.str(replace(input, '/', ' '));
+			inputString >> special >> f.v[0] >> f.t[0] >> f.n[0] >> f.v[1] >> f.t[1] >> f.n[1] >>f.v[2] >> f.t[2] >> f.n[2];
+
+			//sscanf_s(s, "%s %i/%i/%i %i/%i/%i %i/%i/%i", specialChar, &f.v[0], &f.t[0], &f.n[0], &f.v[1], &f.t[1], &f.n[1], &f.v[2], &f.t[2], &f.n[2]);
 			o->faces.push_back(f);
 		}
 		else if (line == "us") {
@@ -163,7 +179,6 @@ void OBJimporter::loadObj(string fileName) {
 	free(specialChar);
 	objFile.close();
 }
-
 std::vector<Model*>* OBJimporter::CreateTriangleData()
 {
 
