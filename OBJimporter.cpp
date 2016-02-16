@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <SOIL\SOIL.h>
 
-
 using namespace std;
 
 OBJimporter::OBJimporter() {
@@ -114,7 +113,8 @@ void OBJimporter::loadObj(string fileName) {
 	face f;
 	//Model* o = new Model();
 	//o->setMaterial(&standardMat);
-	object* o;
+	object* o = new object();
+	o->mtl = &standardMat;
 
 	while (getline(objFile, input))
 	{
@@ -135,7 +135,7 @@ void OBJimporter::loadObj(string fileName) {
 			textureCoords.push_back(t);
 		}
 		else if (line == "f ") {
-			sscanf(input.c_str(), "%s %i/%i/%i %i/%i/%i %i/%i/%i", specialChar, &f.v[0], &f.t[0], &f.n[0], &f.v[1], &f.t[1], &f.n[1], &f.v[2], &f.t[2], &f.n[2]);
+			sscanf_s(input.c_str(), "%s %i/%i/%i %i/%i/%i %i/%i/%i", specialChar, &f.v[0], &f.t[0], &f.n[0], &f.v[1], &f.t[1], &f.n[1], &f.v[2], &f.t[2], &f.n[2]);
 			o->faces.push_back(f);
 		}
 		else if (line == "us") {
@@ -162,14 +162,16 @@ void OBJimporter::loadObj(string fileName) {
 	}
 	free(specialChar);
 	objFile.close();
-	CreateTriangleData();
 }
 
-void OBJimporter::CreateTriangleData()
+std::vector<Model*>* OBJimporter::CreateTriangleData()
 {
 
 	TriangleVertex *triangleVertices;
-	Model* model = new Model();
+
+	std::vector<Model*> result;
+
+	Model* model = nullptr;
 
 	int vIndex;
 	int tIndex;
@@ -179,18 +181,19 @@ void OBJimporter::CreateTriangleData()
 	GLuint buffid;
 
 	for (int o = objectOffset; o < objects.size(); o++) {
+		model = new Model();
 		triangleVertices = new TriangleVertex[objects[o]->faces.size() * 3];
 		for (int i = 0; i < objects[o]->faces.size(); i++) {
 			for (int j = 0; j < 3; j++) {
 				vIndex = objects[o]->faces[i].v[j] - 1;
 				tIndex = objects[o]->faces[i].t[j] - 1;
 				nIndex = objects[o]->faces[i].n[j] - 1;
-				triangleVertices[(3 * i) + j] = { vertices[vIndex].x, vertices[vIndex].y, vertices[vIndex].z, textureCoords[tIndex].u, textureCoords[tIndex].v,
-					normalVertices[nIndex].x, normalVertices[nIndex].y ,normalVertices[nIndex].z };
+				triangleVertices[(3 * i) + j] = { vertices[vIndex].x, vertices[vIndex].y, vertices[vIndex].z, textureCoords[tIndex].u, textureCoords[tIndex].v
+					};
 			}
 		}
 		glGenVertexArrays(1, &vaoid);
-		glBindVertexArray(buffid);
+		glBindVertexArray(vaoid);
 		glGenBuffers(1, &buffid);
 		glBindBuffer(GL_ARRAY_BUFFER, buffid);
 		glBufferData(GL_ARRAY_BUFFER, objects[o]->faces.size() * 3 * sizeof(TriangleVertex), triangleVertices, GL_STATIC_DRAW);
@@ -202,6 +205,9 @@ void OBJimporter::CreateTriangleData()
 		model->setBUFFid(buffid);
 		model->setBUFFid(vaoid);
 		model->setMaterial(objects[o]->mtl);
+		model->setSize(objects[o]->faces.size() * 3);
+
+		result.push_back(model);
 
 		delete[] triangleVertices;
 	}
@@ -209,4 +215,6 @@ void OBJimporter::CreateTriangleData()
 	vertices.clear();
 	normalVertices.clear();
 	textureCoords.clear();
+
+	return &result;
 }

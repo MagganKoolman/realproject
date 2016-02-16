@@ -1,5 +1,10 @@
 #pragma once
 
+#include <vector>
+#include "Datastructs.h"
+#include "Model.h"
+#include "OBJimporter.h"
+
 #include <iostream>
 #include <SDL\SDL.h>
 #include <GL/glew.h>
@@ -26,10 +31,15 @@ private:
 	Sprite testSprite2;
 	Sprite testSprite3;
 
+	std::vector<Model*> models;
+	OBJimporter importer;
+
 	GLuint screen;
 
 	GLSLprogram _colorProgram;
 	GLSLprogram _deferredProgram;
+	
+	GLSLprogram testProgram;
 public:
 	App();
 	~App();

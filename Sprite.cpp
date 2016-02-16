@@ -67,7 +67,7 @@ void Sprite::draw() {
 	glBindBuffer(GL_ARRAY_BUFFER, _vboID);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
-	glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, r));
+	glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, x));
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

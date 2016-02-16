@@ -18,5 +18,5 @@ struct Material {
 
 struct TriangleVertex
 {
-	float x, y, z, u, v, nx, ny, nz;
+	float x, y, z, u, v;
 };
