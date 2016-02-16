@@ -1,0 +1,144 @@
+#include "App.h"
+#include <cstddef>
+#include "Player.h"
+
+struct ScreenVertex {
+	float x, y, s, t;
+};
+
+App::App()
+{
+	this->window = nullptr;
+	this->screen_height = 720;
+	this->screen_width = 1080;
+	this->_player = Player();
+	init();
+}
+
+App::~App()
+{
+
+}
+
+void App::init()
+{
+	SDL_Init(SDL_INIT_EVERYTHING);
+	window = SDL_CreateWindow("Try hard!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_height, SDL_WINDOW_OPENGL);
+
+	SDL_GLContext glContext = SDL_GL_CreateContext(window);
+	if (glContext == nullptr)
+		std::cout << "SDLFEL";
+
+	GLenum error = glewInit();
+	if (error != GLEW_OK)
+		std::cout << "GlewFel!";
+
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
+
+	testSprite.init(-0.4, 0.5, 1.0, 0.2);
+	testSprite2.init(0.3, 0.1, 0.1, 0.2);
+	testSprite3.init(-0.9, -0.9, 0.9, 0.9);
+
+	initShader();
+
+	//Börjar fucka runt!!!
+	glGenBuffers(1, &screen);
+	ScreenVertex vertexData[6];
+
+	//first triangle
+	vertexData[0].x = -1.0;
+	vertexData[0].y = -1.0;
+	vertexData[0].s = 0.0;
+	vertexData[0].t = 0.0;
+
+	vertexData[1].x = -1.0;
+	vertexData[1].y = 1.0;
+	vertexData[1].s = 0.0;
+	vertexData[1].t = 1.0;
+
+	vertexData[2].x = 1.0;
+	vertexData[2].y = -1.0;
+	vertexData[2].s = 1.0;
+	vertexData[2].t = 0.0;
+
+	vertexData[3].x = 1.0;
+	vertexData[3].y = -1.0;
+	vertexData[3].s = 1.0;
+	vertexData[3].t = 0.0;
+
+	vertexData[4].x = 1.0;
+	vertexData[4].y = 1.0;
+	vertexData[4].s = 1.0;
+	vertexData[4].t = 1.0;
+
+	vertexData[5].x = -1.0;
+	vertexData[5].y = 1.0;
+	vertexData[5].s = 0.0;
+	vertexData[5].t = 1.0;
+
+	glBindBuffer(GL_ARRAY_BUFFER, screen);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), &vertexData[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void App::initShader() {
+	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag");
+	_colorProgram.addAttribute("position");
+	_colorProgram.addAttribute("texturePos");
+	_colorProgram.linkShaders();
+
+	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag");
+	_deferredProgram.addAttribute("vertexPos");
+	_deferredProgram.addAttribute("colors");
+	_deferredProgram.initFrameBuffer();
+	_deferredProgram.linkShaders();
+}
+
+
+void App::update(){
+	
+	processInput();
+	float x = 0.01f;
+	_player.update(x, *window);
+	render();
+}
+
+void App::processInput() {
+	
+}
+
+void App::render() {
+	
+	_deferredProgram.use();
+	_player.matrixUpdate(_deferredProgram.getProgramID());
+	
+	testSprite3.draw();
+	testSprite2.draw();
+	testSprite.draw();
+	
+	glBindTexture(GL_TEXTURE_2D, _deferredProgram.getTexture());
+	_deferredProgram.unUse();
+	
+	_colorProgram.use();		
+	//här börjar jag fucka runt!
+	
+	glBindBuffer(GL_ARRAY_BUFFER, screen);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));
+	
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//Här slutar jag
+	
+	_colorProgram.unUse();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	SDL_GL_SwapWindow(window);
+}
+
