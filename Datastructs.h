@@ -3,6 +3,8 @@
 #include <glm\glm.hpp>
 #include <string>
 
+typedef glm::vec3 vec3;
+
 struct Vertex {
 	float x, y, z;
 	GLbyte r, g, b;
@@ -14,3 +16,7 @@ struct Material {
 	GLuint texid;
 };
 
+struct TriangleVertex
+{
+	float x, y, z, u, v, nx, ny, nz;
+};

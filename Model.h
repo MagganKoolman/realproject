@@ -6,11 +6,13 @@
 class Model {
 private:
 
-	GLuint VBOid;
-	GLuint BUFFid;
-	Material* mat;
+	GLuint _VBOid;
+	GLuint _BUFFid;
+	Material* _mat;
 public:
 	Model();
 	~Model();
-	
+	void setMaterial(Material* material);
+	void setVBOid(GLuint vbo);
+	void setBUFFid(GLuint bid);
 };

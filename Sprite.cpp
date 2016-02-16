@@ -1,5 +1,5 @@
 #include "Sprite.h"
-#include "Vertex.h"
+#include "datastructs.h"
 
 #include <cstddef>
 
