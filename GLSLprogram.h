@@ -25,6 +25,7 @@ private:
 	
 	GLuint _frameBuffer;
 	GLuint _texture;
+	GLuint _normalTexture;
 	GLuint _depthRenderBuffer;
 
 	int _numAttributes;

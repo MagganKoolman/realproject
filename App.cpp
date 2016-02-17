@@ -98,6 +98,7 @@ void App::initShader() {
 
 	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag");
 	_deferredProgram.addAttribute("vertexPos");
+	_deferredProgram.addAttribute("normal");
 	_deferredProgram.addAttribute("texCoorIn");
 	_deferredProgram.initFrameBuffer();
 	_deferredProgram.linkShaders();
@@ -135,7 +136,6 @@ void App::render() {
 	_deferredProgram.unUse();
 	
 	_colorProgram.use();		
-	//här börjar jag fucka runt!
 	
 	glBindBuffer(GL_ARRAY_BUFFER, screen);
 

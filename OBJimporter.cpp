@@ -201,8 +201,9 @@ std::vector<Model*> OBJimporter::CreateTriangleData()
 				vIndex = objects[o]->faces[i].v[j] - 1;
 				tIndex = objects[o]->faces[i].t[j] - 1;
 				nIndex = objects[o]->faces[i].n[j] - 1;
-				triangleVertices[(3 * i) + j] = { vertices[vIndex].x, vertices[vIndex].y, vertices[vIndex].z, textureCoords[tIndex].u, textureCoords[tIndex].v
-					};
+				triangleVertices[(3 * i) + j] = { vertices[vIndex].x, vertices[vIndex].y, vertices[vIndex].z, 
+					normalVertices[nIndex].x, normalVertices[nIndex].y, normalVertices[nIndex].z,
+					textureCoords[tIndex].u, textureCoords[tIndex].v };
 			}
 		}
 		
