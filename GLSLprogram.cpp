@@ -152,7 +152,7 @@ void GLSLprogram::compileShader(const std::string& filePath, GLuint shaderID) {
 
 GLuint GLSLprogram::getTexture() const
 {
-	return this->_normalTexture;
+	return this->_texture;
 }
 
 GLuint GLSLprogram::getProgramID() const

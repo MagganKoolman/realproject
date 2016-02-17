@@ -32,7 +32,7 @@ private:
 	Sprite testSprite3;
 
 	std::vector<Model*> models;
-	OBJimporter importer;
+	OBJimporter* importer;
 
 	GLuint screen;
 

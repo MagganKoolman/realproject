@@ -17,5 +17,5 @@ public:
 	void setVBOid(GLuint vbo);
 	void setBUFFid(GLuint bid);
 	void setSize(int s);
-	void draw();
+	void draw(GLuint spID);
 };

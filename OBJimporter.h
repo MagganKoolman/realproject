@@ -26,7 +26,7 @@ class OBJimporter {
 			std::vector<face> faces;
 		};
 
-		std::vector<Material> allMaterials;
+		std::vector<Material*> allMaterials;
 		std::vector<vtx> vertices;
 		std::vector<nvtx> normalVertices;
 		std::vector<tex> textureCoords;
