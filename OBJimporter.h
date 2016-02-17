@@ -40,7 +40,7 @@ class OBJimporter {
 		OBJimporter();
 		~OBJimporter();
 		void loadObj(std::string fileName);
-		std::vector<Model*>* CreateTriangleData();
+		std::vector<Model*> CreateTriangleData();
 		void loadMaterials(std::string materials);
 		GLuint CreateTexture(std::string fileName);
 };

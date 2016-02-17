@@ -34,15 +34,10 @@ void App::init()
 		std::cout << "GlewFel!";
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 
-	testSprite.init(-0.4, 0.5, 1.0, 0.2);
-	testSprite2.init(0.3, 0.1, 0.1, 0.2);
-	testSprite3.init(-0.9, -0.9, 0.9, 0.9);
-
 	initShader();
-
+	glEnable(GL_DEPTH_TEST);
 	//Börjar fucka runt!!!
 	glGenBuffers(1, &screen);
 	ScreenVertex vertexData[6];
@@ -78,9 +73,8 @@ void App::init()
 	vertexData[5].s = 0.0;
 	vertexData[5].t = 1.0;
 
-	importer.loadObj("box.obj");
-	models = *importer.CreateTriangleData();
-
+	importer.loadObj("models/box.obj");
+	models = importer.CreateTriangleData();
 
 	glBindBuffer(GL_ARRAY_BUFFER, screen);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), &vertexData[0], GL_STATIC_DRAW);
@@ -89,11 +83,11 @@ void App::init()
 }
 
 void App::initShader() {
-	testProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag");
-	testProgram.addAttribute("position");
-	testProgram.addAttribute("texturePos");
+	/*testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag");
+	testProgram.addAttribute("vertexPos");
+	testProgram.addAttribute("texCoorIn");
 	testProgram.linkShaders();
-
+	*/
 	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag");
 	_colorProgram.addAttribute("position");
 	_colorProgram.addAttribute("texturePos");
@@ -101,7 +95,7 @@ void App::initShader() {
 
 	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag");
 	_deferredProgram.addAttribute("vertexPos");
-	_deferredProgram.addAttribute("colors");
+	_deferredProgram.addAttribute("texCoorIn");
 	_deferredProgram.initFrameBuffer();
 	_deferredProgram.linkShaders();
 }
@@ -120,19 +114,19 @@ void App::processInput() {
 }
 
 void App::render() {
-	testProgram.use();
+	/*testProgram.use();
 	_player.matrixUpdate(testProgram.getProgramID());
 	for (int i = 0; i < models.size(); i++) {
 		models[i]->draw();
 	}
-	testProgram.unUse();
-	/*
+	testProgram.unUse();*/
+	
 	_deferredProgram.use();
 	_player.matrixUpdate(_deferredProgram.getProgramID());
 	
-	/*testSprite3.draw();
-	testSprite2.draw();
-	testSprite.draw();
+	for (int i = 0; i < models.size(); i++) {
+		models[i]->draw();
+	}
 	
 	glBindTexture(GL_TEXTURE_2D, _deferredProgram.getTexture());
 	_deferredProgram.unUse();
@@ -153,7 +147,7 @@ void App::render() {
 	//Här slutar jag
 	
 	_colorProgram.unUse();
-	glBindTexture(GL_TEXTURE_2D, 0);*/
+	glBindTexture(GL_TEXTURE_2D, 0);
 	SDL_GL_SwapWindow(window);
 }
 
