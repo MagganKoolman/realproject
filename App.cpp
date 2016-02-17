@@ -17,7 +17,10 @@ App::App()
 
 App::~App()
 {
-
+	for (int i = 0; i < models.size(); i++) {
+		delete models[i];
+	}
+	this->models.clear();
 }
 
 void App::init()

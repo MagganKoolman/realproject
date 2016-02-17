@@ -25,7 +25,9 @@ OBJimporter::OBJimporter() {
 	objectOffset = 0;
 }
 OBJimporter::~OBJimporter() {
-
+	for (int i = 0; i < objects.size(); i++) {
+		delete objects[i];
+	}
 }
 
 GLuint OBJimporter::CreateTexture(string fileName)
