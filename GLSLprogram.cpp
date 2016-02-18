@@ -2,8 +2,8 @@
 #include <fstream>
 #include <vector>
 
-GLSLprogram::GLSLprogram(): _programID(0), _vertexShader(0), _fragmentShader(0), _numAttributes(0), _frameBuffer(0), _texture(0), _depthRenderBuffer(0),
-_normalTexture(0), _depthTexture(0){
+GLSLprogram::GLSLprogram(): _programID(0), _vertexShader(0), _fragmentShader(0), _numAttributes(0), _frameBuffer(0), _texture(0), _specularTexture(0),
+_normalTexture(0), _depthTexture(0), _diffuseTexture(0){
 
 }
 
@@ -21,7 +21,6 @@ void GLSLprogram::compileShaders(const std::string& vertexPath, const std::strin
 	if (_fragmentShader == 0) {
 		std::cout << "Fragment shader fucka!";
 	}
-
 	compileShader(vertexPath, _vertexShader);
 	compileShader(fragmentPath, _fragmentShader);
 }
@@ -76,6 +75,20 @@ void GLSLprogram::initFrameBuffer() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	
+	glGenTextures(1, &_specularTexture);
+	glBindTexture(GL_TEXTURE_2D, _specularTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1080, 720, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glGenTextures(1, &_diffuseTexture);
+	glBindTexture(GL_TEXTURE_2D, _diffuseTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1080, 720, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glGenTextures(1, &_depthTexture);
 	glBindTexture(GL_TEXTURE_2D, _depthTexture);
@@ -84,17 +97,14 @@ void GLSLprogram::initFrameBuffer() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	/*glGenRenderbuffers(1, &_depthRenderBuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1080, 720);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);*/
-
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _texture, 0);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, _normalTexture, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, _specularTexture, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, _specularTexture, 0);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _depthTexture, 0);
 		
-	GLenum DrawBuffers[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	glDrawBuffers(2, DrawBuffers); 
+	GLenum DrawBuffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+	glDrawBuffers(4, DrawBuffers); 
 	
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "No framebuffer!!!!";
@@ -194,7 +204,7 @@ GLuint GLSLprogram::getTexture() const
 
 GLuint GLSLprogram::getTexture2() const
 {
-	return this->_normalTexture;
+	return this->_depthTexture;
 }
 
 

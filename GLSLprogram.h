@@ -31,7 +31,8 @@ private:
 	GLuint _texture;
 	GLuint _normalTexture;
 	GLuint _depthTexture;
-	GLuint _depthRenderBuffer;
+	GLuint _specularTexture;
+	GLuint _diffuseTexture;
 
 	int _numAttributes;
 	void compileShader(const std::string& filePath, GLuint shaderID);
