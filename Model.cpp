@@ -22,9 +22,13 @@ void Model::setSize(int s) {
 void Model::draw(GLuint spID) {
 	glBindBuffer(GL_ARRAY_BUFFER, _BUFFid);
 	glBindTexture(GL_TEXTURE_2D, _mat->texid);
-
+	
 	GLuint ambient = glGetUniformLocation(spID, "ambient");
+	GLuint diffuse = glGetUniformLocation(spID, "diffuse");
+	GLuint specular = glGetUniformLocation(spID, "specular");
 	glUniform3f(ambient, this->_mat->Ka.x, this->_mat->Ka.y, this->_mat->Ka.z);
+	glUniform3f(diffuse, this->_mat->Kd.x, this->_mat->Kd.y, this->_mat->Kd.z);
+	glUniform3f(specular, this->_mat->Ks.x, this->_mat->Ks.y, this->_mat->Ks.z);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TriangleVertex), (void*)offsetof(TriangleVertex, x));
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(TriangleVertex), (void*)offsetof(TriangleVertex, nx));
