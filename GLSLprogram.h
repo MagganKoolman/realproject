@@ -21,6 +21,9 @@ public:
 
 	GLuint getTexture() const;
 	GLuint getTexture2() const;
+	GLuint getTexture3() const;
+	GLuint getTexture4() const;
+	GLuint getTexture5() const;
 	GLuint getProgramID() const;
 private:
 	GLuint _programID;

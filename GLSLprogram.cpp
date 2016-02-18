@@ -78,14 +78,14 @@ void GLSLprogram::initFrameBuffer() {
 	
 	glGenTextures(1, &_specularTexture);
 	glBindTexture(GL_TEXTURE_2D, _specularTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1080, 720, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1080, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glGenTextures(1, &_diffuseTexture);
 	glBindTexture(GL_TEXTURE_2D, _diffuseTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1080, 720, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1080, 720, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -100,7 +100,7 @@ void GLSLprogram::initFrameBuffer() {
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _texture, 0);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, _normalTexture, 0);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, _specularTexture, 0);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, _specularTexture, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, _diffuseTexture, 0);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _depthTexture, 0);
 		
 	GLenum DrawBuffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
@@ -172,24 +172,45 @@ void GLSLprogram::enableTextures(const GLSLprogram &secondShader) {
 
 	GLuint texLocation = glGetUniformLocation(_programID, "colorTex");
 	glUniform1i(texLocation, 0);
-
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, secondShader.getTexture());
 	
-	texLocation = glGetUniformLocation(_programID, "normalTex");
+	texLocation = glGetUniformLocation(_programID, "depthTex");
 	glUniform1i(texLocation, 1);
-
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, secondShader.getTexture2());
 
-	texLocation = glGetUniformLocation(_programID, "depthTex");
+	texLocation = glGetUniformLocation(_programID, "normalTex");
 	glUniform1i(texLocation, 2);
-
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, secondShader.getTexture2());
+	glBindTexture(GL_TEXTURE_2D, secondShader.getTexture3());
+
+
+	texLocation = glGetUniformLocation(_programID, "diffuse");
+	glUniform1i(texLocation, 3);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, secondShader.getTexture4());
+
+	texLocation = glGetUniformLocation(_programID, "specular");
+	glUniform1i(texLocation, 4);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, secondShader.getTexture5());
 }
 
 void GLSLprogram::disableTextures() {
+
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
@@ -205,6 +226,18 @@ GLuint GLSLprogram::getTexture() const
 GLuint GLSLprogram::getTexture2() const
 {
 	return this->_depthTexture;
+}
+GLuint GLSLprogram::getTexture3() const
+{
+	return this->_normalTexture;
+}
+GLuint GLSLprogram::getTexture4() const
+{
+	return this->_diffuseTexture;
+}
+GLuint GLSLprogram::getTexture5() const
+{
+	return this->_specularTexture;
 }
 
 

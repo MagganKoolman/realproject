@@ -67,3 +67,13 @@ void Player::matrixUpdate(const GLuint &shaderProgram) {
 	glUniformMatrix4fv(perspMatrix, 1, GL_FALSE, &_perspectiveMat[0][0]);
 	glUniformMatrix4fv(camMatrix, 1, GL_FALSE, &_viewMat[0][0]);
 }
+
+void Player::matrixUpdate2(const GLuint &shaderProgram) {
+	GLuint camMatrix = glGetUniformLocation(shaderProgram, "cameraPos");
+	GLuint perspMatrix = glGetUniformLocation(shaderProgram, "Perspective");
+
+	_viewMat = glm::lookAt(_position, _position + _lookat, glm::vec3(0, 1, 0));
+	glm::mat4x4 invPM = glm::inverse(_perspectiveMat);
+	glUniformMatrix4fv(perspMatrix, 1, GL_FALSE, &invPM[0][0]);
+	glUniform3fv(camMatrix, 1, &this->_position[0]);
+}

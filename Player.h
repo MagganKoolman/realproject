@@ -9,6 +9,7 @@ public:
 	
 	void update(float dt, SDL_Window &window);
 	void matrixUpdate(const GLuint &shaderProgram);
+	void matrixUpdate2(const GLuint &shaderProgram);
 
 private:
 	glm::mat3x3 _rotY;

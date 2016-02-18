@@ -78,7 +78,7 @@ void App::init()
 
 	importer = new OBJimporter();
 
-	importer->loadObj("models/box.obj");
+	importer->loadObj("models/sphere1.obj");
 	models = importer->CreateTriangleData();
 	
 
@@ -151,6 +151,8 @@ void App::render() {
 	_deferredProgram.unUse();
 	_colorProgram.use();		
 	_colorProgram.enableTextures(_deferredProgram);
+
+	_player.matrixUpdate2(_colorProgram.getProgramID());
 
 	glBindBuffer(GL_ARRAY_BUFFER, screen);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));
