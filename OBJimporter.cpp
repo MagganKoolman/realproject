@@ -58,7 +58,7 @@ void OBJimporter::loadMaterials(string materials)
 	ifstream matFile("models/" + materials);
 	istringstream inputString;
 	string line, special, input, name;
-	Material mat;
+	Material* mat = new Material();
 	bool first = true;
 	bool newMaterial = true;
 	while (getline(matFile, input))
@@ -72,7 +72,7 @@ void OBJimporter::loadMaterials(string materials)
 			inputString >> special >> name;
 			newMaterial = true;
 			for (int i = 0; i < allMaterials.size(); i++) {
-				if (name == allMaterials[i].materialName) {
+				if (name == allMaterials[i]->materialName) {
 					newMaterial = false;
 				}
 			}
@@ -82,24 +82,24 @@ void OBJimporter::loadMaterials(string materials)
 				}
 				first = false;
 
-				mat.materialName = "";
+				mat->materialName = "";
 
-				mat.materialName = name;
-				mat.texid = 0;
+				mat->materialName = name;
+				mat->texid = 0;
 			}
 		}
 		if (newMaterial) {
 			if (line == "Ka")
 			{
-				inputString >> special >> mat.Ka.x >> mat.Ka.y >> mat.Ka.z;
+				inputString >> special >> mat->Ka.x >> mat->Ka.y >> mat->Ka.z;
 			}
 			else if (line == "Kd")
 			{
-				inputString >> special >> mat.Kd.x >> mat.Kd.y >> mat.Kd.z;
+				inputString >> special >> mat->Kd.x >> mat->Kd.y >> mat->Kd.z;
 			}
 			else if (line == "Ks")
 			{
-				inputString >> special >> mat.Ks.x >> mat.Ks.y >> mat.Ks.z;
+				inputString >> special >> mat->Ks.x >> mat->Ks.y >> mat->Ks.z;
 			}
 			else if (line == "ma")
 			{
@@ -107,12 +107,15 @@ void OBJimporter::loadMaterials(string materials)
 				if (!texmapid[name]) {
 					texmapid[name] = CreateTexture(name);
 				}
-				mat.texid = texmapid[name];
+				mat->texid = texmapid[name];
 			}
 		}
 	}
 	if (newMaterial) {
 		allMaterials.push_back(mat);
+	}
+	else {
+		delete mat;
 	}
 }
 
@@ -160,8 +163,8 @@ void OBJimporter::loadObj(string fileName) {
 				o->mtl = &standardMat;
 			}
 			for (int i = 0; i < allMaterials.size(); i++) {
-				if (mat == allMaterials[i].materialName) {
-					o->mtl = &allMaterials[i];
+				if (mat == allMaterials[i]->materialName) {
+					o->mtl = allMaterials[i];
 					break;
 				}
 			}
