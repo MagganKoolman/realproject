@@ -3,7 +3,7 @@
 #include <vector>
 
 GLSLprogram::GLSLprogram(): _programID(0), _vertexShader(0), _fragmentShader(0), _numAttributes(0), _frameBuffer(0), _texture(0), _depthRenderBuffer(0),
-_normalTexture(0){
+_normalTexture(0), _depthTexture(0){
 
 }
 
@@ -77,19 +77,27 @@ void GLSLprogram::initFrameBuffer() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	glGenRenderbuffers(1, &_depthRenderBuffer);
+	glGenTextures(1, &_depthTexture);
+	glBindTexture(GL_TEXTURE_2D, _depthTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1080, 720, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	/*glGenRenderbuffers(1, &_depthRenderBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1080, 720);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);*/
 
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _texture, 0);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, _normalTexture, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _depthTexture, 0);
+		
 	GLenum DrawBuffers[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 	glDrawBuffers(2, DrawBuffers); 
 	
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "No framebuffer!!!!";
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
 }
@@ -158,10 +166,16 @@ void GLSLprogram::enableTextures(const GLSLprogram &secondShader) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, secondShader.getTexture());
 	
-	GLuint texLocation2 = glGetUniformLocation(_programID, "normalTex");
-	glUniform1i(texLocation2, 1);
+	texLocation = glGetUniformLocation(_programID, "normalTex");
+	glUniform1i(texLocation, 1);
 
 	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, secondShader.getTexture2());
+
+	texLocation = glGetUniformLocation(_programID, "depthTex");
+	glUniform1i(texLocation, 2);
+
+	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, secondShader.getTexture2());
 }
 
