@@ -9,7 +9,6 @@ in vec2 texOut;
 uniform sampler2D texSampler;
 
 void main(){
-	color = texture(texSampler, vec2(texOut.s, 1- texOut.t)) - vec4(normalOut, 0.0);
+	color = texture(texSampler, vec2(texOut.s, 1- texOut.t));
 	normalTex = vec4(normalOut, 1.0);
-	//color = vec4(1.0, 0.5, 0.3, 1.0);
 }

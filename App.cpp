@@ -131,26 +131,21 @@ void App::render() {
 	for (int i = 0; i < models.size(); i++) {
 		models[i]->draw();
 	}
-	
-	glBindTexture(GL_TEXTURE_2D, _deferredProgram.getTexture());
 	_deferredProgram.unUse();
 	
 	_colorProgram.use();		
-	
-	glBindBuffer(GL_ARRAY_BUFFER, screen);
+	_colorProgram.enableTextures(_deferredProgram);
 
+	glBindBuffer(GL_ARRAY_BUFFER, screen);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));
-	
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));	
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	//Här slutar jag
-	
+	_colorProgram.disableTextures();
 	_colorProgram.unUse();
-	glBindTexture(GL_TEXTURE_2D, 0);
+	
 	SDL_GL_SwapWindow(window);
 }
 

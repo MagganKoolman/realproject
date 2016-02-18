@@ -150,10 +150,39 @@ void GLSLprogram::compileShader(const std::string& filePath, GLuint shaderID) {
 	}
 }
 
+void GLSLprogram::enableTextures(const GLSLprogram &secondShader) {
+
+	GLuint texLocation = glGetUniformLocation(_programID, "colorTex");
+	glUniform1i(texLocation, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, secondShader.getTexture());
+	
+	GLuint texLocation2 = glGetUniformLocation(_programID, "normalTex");
+	glUniform1i(texLocation2, 1);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, secondShader.getTexture2());
+}
+
+void GLSLprogram::disableTextures() {
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);	
+}
+
 GLuint GLSLprogram::getTexture() const
+{
+	return this->_texture;
+}
+
+GLuint GLSLprogram::getTexture2() const
 {
 	return this->_normalTexture;
 }
+
 
 GLuint GLSLprogram::getProgramID() const
 {

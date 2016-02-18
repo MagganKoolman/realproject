@@ -16,7 +16,11 @@ public:
 	void use();
 	void unUse();
 
+	void enableTextures(const GLSLprogram &secondShader);
+	void disableTextures();
+
 	GLuint getTexture() const;
+	GLuint getTexture2() const;
 	GLuint getProgramID() const;
 private:
 	GLuint _programID;
