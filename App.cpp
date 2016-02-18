@@ -83,7 +83,7 @@ void App::init()
 	
 
 	delete importer;
-
+	/*
 	importer = new OBJimporter();
 
 	std::vector<Model*> temp;
@@ -94,10 +94,10 @@ void App::init()
 	}
 
 	delete importer;
-
+	*/
 	glBindBuffer(GL_ARRAY_BUFFER, screen);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), &vertexData[0], GL_STATIC_DRAW);
-
+	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
@@ -147,8 +147,8 @@ void App::render() {
 	for (int i = 0; i < models.size(); i++) {
 		models[i]->draw(_deferredProgram.getProgramID());
 	}
-	_deferredProgram.unUse();
 	
+	_deferredProgram.unUse();
 	_colorProgram.use();		
 	_colorProgram.enableTextures(_deferredProgram);
 
@@ -158,7 +158,6 @@ void App::render() {
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//Här slutar jag
 	_colorProgram.disableTextures();
 	_colorProgram.unUse();
 	
