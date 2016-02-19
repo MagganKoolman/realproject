@@ -25,7 +25,6 @@ private:
 	void init();
 	void initShader();
 	void render();
-	void processInput();
 
 	Sprite testSprite;
 	Sprite testSprite2;

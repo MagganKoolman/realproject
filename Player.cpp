@@ -8,7 +8,7 @@ const float PI = 3.1415f;
 const float halfPI = PI / 2;
 
 Player::Player() {
-	this->_position = { 0,0,0 };
+	this->_position = { 0,0,3 };
 	this->_lookat = { 0,0,-1 };
 	this->_angleHor = 0.01f;
 	this->_angleVer = 0.00f;

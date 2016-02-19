@@ -60,7 +60,7 @@ void GLSLprogram::initFrameBuffer() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 
 	glEnable(GL_TEXTURE_2D); 
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 
 	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);
@@ -92,7 +92,7 @@ void GLSLprogram::initFrameBuffer() {
 
 	glGenTextures(1, &_depthTexture);
 	glBindTexture(GL_TEXTURE_2D, _depthTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1080, 720, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, 1080, 720, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);

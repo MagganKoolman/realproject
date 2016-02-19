@@ -20,18 +20,16 @@ void main(){
 	vec3 dif = texture(diffuse, texCoor).rgb;
 	vec3 spec = texture(specular, texCoor).rgb;
 
-	vec3 light = vec3(0, 0, 5);
-	vec3 pos = (Perspective * vec4(texCoor, 2*depth-1, 1)).xyz;
+	vec3 light = (Perspective * vec4(vec3(0, 0, 0), 1)).xyz;
+	vec3 pos = (Perspective * vec4(texCoor, depth, 1)).xyz;
 	
 	vec3 lv = normalize(pos - light);
 	vec3 r = reflect(lv, normal);
-	vec3 vc = normalize( vec3(0,0,0) - pos );
+	vec3 vc = normalize( cameraPos - pos );
 
 	vec3 specularLight = spec * pow(max(dot(vc,r),0),5);
 	vec3 diffuseLight = dif * max(dot(normal, -lv),0);
-	//color = vec4(0.5*(c.rgb + diffuseLight ) + specularLight, c.a); 
-
-	color = vec4(specularLight, 0); 
+	color = vec4(0.5*(c.rgb + diffuseLight ) + specularLight, c.a); 
 }
 /*
 	vec3 light = vec3(0,0,5);
