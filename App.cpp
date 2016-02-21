@@ -1,6 +1,7 @@
 #include "App.h"
 #include <cstddef>
 #include "Player.h"
+#include "LightSource.h"
 
 struct ScreenVertex {
 	float x, y, s, t;
@@ -107,10 +108,12 @@ void App::initShader() {
 	testProgram.addAttribute("texCoorIn");
 	testProgram.linkShaders();
 	*/
-	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag");
+	/*_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag");
 	_colorProgram.addAttribute("position");
 	_colorProgram.addAttribute("texturePos");
-	_colorProgram.linkShaders();
+	_colorProgram.linkShaders();*/
+
+	LightSource lights("shaders/ColorShader.vert", "shaders/ColorShader.frag");
 
 	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag");
 	_deferredProgram.addAttribute("vertexPos");

@@ -25,14 +25,10 @@ void GLSLprogram::compileShaders(const std::string& vertexPath, const std::strin
 	compileShader(fragmentPath, _fragmentShader);
 }
 
-void GLSLprogram::linkShaders() {
-	
-
+void GLSLprogram::linkShaders() {	
 	glAttachShader(_programID, _vertexShader);
 	glAttachShader(_programID, _fragmentShader);
-
 	glLinkProgram(_programID);
-
 	GLint success = 0;
 	glGetProgramiv(_programID, GL_LINK_STATUS, (int*)&success);
 	if (success == GL_FALSE) {
@@ -48,7 +44,6 @@ void GLSLprogram::linkShaders() {
 		
 		std::printf("%s\n", &(errorLog[0]));
 	}
-
 	glDetachShader(_programID, _vertexShader);
 	glDetachShader(_programID, _fragmentShader);
 	glDeleteShader(_vertexShader);
