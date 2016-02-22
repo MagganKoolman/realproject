@@ -20,7 +20,7 @@ void main(){
 	vec3 dif = texture(diffuse, texCoor).rgb;
 	vec3 spec = texture(specular, texCoor).rgb;
 
-	vec3 light = vec3(10,0,0);
+	vec3 light = vec3(10,0,5);
 	vec4 pos = (Perspective * (vec4(texCoor.x, texCoor.y, depth, 1)*2-1));
 	pos /= pos.w;
 
@@ -35,33 +35,5 @@ void main(){
 	vec3 specularColor = spec*pow(max(dot(eyeDir,vHalfVector),0.0), 20);
 	vec3 diffureColor = dif*dot(lightDir, normal);
 
-    color = vec4(diffureColor + specularColor,1);
-	//color = vec4( (normal+1)/2, 1);
-
-	
-
-/*
-	vec3 light = vec3(0, 0, 5);
-	vec3 pos = (Perspective * vec4(texCoor, depth, 1)).rgb ;
-	
-	vec3 lv = normalize(pos - light);
-	vec3 r = reflect(lv, normal);
-	vec3 vc = normalize(cameraPos - pos );
-
-	vec3 specularLight = spec * pow(max(dot(vc,r),0),5);
-	vec3 diffuseLight = dif * max(dot(normal, -lv),0);
-	color = vec4(0.5*(c.rgb + diffuseLight ) + specularLight, c.a); 
-
-	//color = vec4(specularLight, 1); */
+    color = c + vec4(diffureColor + specularColor,1);
 }
-/*
-	vec3 light = vec3(0,0,5);
-	vec3 lv = normalize(position - light);
-	vec3 r = reflect(lv, normal);
-	vec3 vc = normalize(cameraPos - position);
-
-	vec3 specular = diffuseLight * pow(max(dot(vc, r),0),5);
-	vec4 mySample = texture(texSampler, vec2(texOut.s, 1- texOut.t));
-	vec3 diffuse = diffuseLight* max(dot(normal, -lv),0);
-	fragment_color = 0.5*(mySample.rgb + ambientLight + diffuse) + 2*specular;
-*/

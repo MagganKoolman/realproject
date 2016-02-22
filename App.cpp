@@ -141,30 +141,31 @@ void App::render() {
 		models[i]->draw();
 	}
 	testProgram.unUse();*/
-	
-	_deferredProgram.use();
-	_player.matrixUpdate(_deferredProgram.getProgramID());
-	
-	for (int i = 0; i < models.size(); i++) {
-		models[i]->draw(_deferredProgram.getProgramID());
+	if (!GetAsyncKeyState('Q'))
+	{
+		_deferredProgram.use();
+		_player.matrixUpdate(_deferredProgram.getProgramID());
+
+		for (int i = 0; i < models.size(); i++) {
+			models[i]->draw(_deferredProgram.getProgramID());
+		}
+
+		_deferredProgram.unUse();
+		_colorProgram.use();
+		_colorProgram.enableTextures(_deferredProgram);
+
+		_player.matrixUpdate2(_colorProgram.getProgramID());
+
+		glBindBuffer(GL_ARRAY_BUFFER, screen);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		_colorProgram.disableTextures();
+		_colorProgram.unUse();
 	}
-	
-	_deferredProgram.unUse();
-	_colorProgram.use();		
-	_colorProgram.enableTextures(_deferredProgram);
-
-	_player.matrixUpdate2(_colorProgram.getProgramID());
-
-	glBindBuffer(GL_ARRAY_BUFFER, screen);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));	
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	_colorProgram.disableTextures();
-	_colorProgram.unUse();
-
-	if (GetAsyncKeyState('Q')) {
+	else{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		_wireFrameProgram.use();
