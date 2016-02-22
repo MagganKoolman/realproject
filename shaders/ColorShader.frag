@@ -15,12 +15,17 @@ uniform mat4 Perspective;
 
 void main(){
 	vec4 c = texture(colorTex , texCoor); 
-	vec3 normal = texture(normalTex, texCoor).rgb; 
+	vec3 normal = texture(normalTex, texCoor).rgb;
+ 
 	float depth = texture(depthTex, texCoor).r;
+	float nearPlane = 1.0;
+	float farPlane = 50.0;
+	float linnearDepth = 2.0 / (nearPlane + farPlane - depth * (farPlane - nearPlane));
+
 	vec3 dif = texture(diffuse, texCoor).rgb;
 	vec3 spec = texture(specular, texCoor).rgb;
 
-	vec3 light = (Perspective * vec4(vec3(0, 0, 0), 1)).xyz;
+	vec3 light = (vec4(vec3(0, 0, 0), 1)).xyz;
 	vec3 pos = (Perspective * vec4(texCoor, depth, 1)).xyz;
 	
 	vec3 lv = normalize(pos - light);
@@ -29,7 +34,8 @@ void main(){
 
 	vec3 specularLight = spec * pow(max(dot(vc,r),0),5);
 	vec3 diffuseLight = dif * max(dot(normal, -lv),0);
-	color = vec4(0.5*(c.rgb + diffuseLight ) + specularLight, c.a); 
+	//color = vec4(0.5*(c.rgb + diffuseLight ) + specularLight, c.a); 
+	color.rgb = vec3(linnearDepth);
 }
 /*
 	vec3 light = vec3(0,0,5);
