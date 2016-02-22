@@ -1,7 +1,5 @@
 #include "App.h"
 #include <cstddef>
-#include "Player.h"
-#include "LightSource.h"
 
 struct ScreenVertex {
 	float x, y, s, t;
@@ -39,50 +37,15 @@ void App::init()
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
-
-	initShader();
 	glEnable(GL_DEPTH_TEST);
-	//Börjar fucka runt!!!
-	glGenBuffers(1, &screen);
-	ScreenVertex vertexData[6];
-
-	//first triangle
-	vertexData[0].x = -1.0;
-	vertexData[0].y = -1.0;
-	vertexData[0].s = 0.0;
-	vertexData[0].t = 0.0;
-
-	vertexData[1].x = -1.0;
-	vertexData[1].y = 1.0;
-	vertexData[1].s = 0.0;
-	vertexData[1].t = 1.0;
-
-	vertexData[2].x = 1.0;
-	vertexData[2].y = -1.0;
-	vertexData[2].s = 1.0;
-	vertexData[2].t = 0.0;
-
-	vertexData[3].x = 1.0;
-	vertexData[3].y = -1.0;
-	vertexData[3].s = 1.0;
-	vertexData[3].t = 0.0;
-
-	vertexData[4].x = 1.0;
-	vertexData[4].y = 1.0;
-	vertexData[4].s = 1.0;
-	vertexData[4].t = 1.0;
-
-	vertexData[5].x = -1.0;
-	vertexData[5].y = 1.0;
-	vertexData[5].s = 0.0;
-	vertexData[5].t = 1.0;
+	
+	initShader();	
 
 	importer = new OBJimporter();
 
 	importer->loadObj("models/sphere1.obj");
 	models = importer->CreateTriangleData();
 	
-
 	delete importer;
 	
 	importer = new OBJimporter();
@@ -93,13 +56,8 @@ void App::init()
 	for (int i = 0; i < temp.size(); i++) {
 		models.push_back(temp[i]);
 	}
-
 	delete importer;
-	
-	glBindBuffer(GL_ARRAY_BUFFER, screen);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), &vertexData[0], GL_STATIC_DRAW);
-	
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	createScreenQuad();
 }
 
 void App::initShader() {
@@ -113,7 +71,7 @@ void App::initShader() {
 	_colorProgram.addAttribute("texturePos");
 	_colorProgram.linkShaders();
 
-	//LightSource lights("shaders/ColorShader.vert", "shaders/ColorShader.frag");
+	lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
 
 	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag");
 	_deferredProgram.addAttribute("vertexPos");
@@ -127,6 +85,19 @@ void App::initShader() {
 	_wireFrameProgram.linkShaders();
 }
 
+void App::createScreenQuad() {
+	glGenBuffers(1, &screen);
+	ScreenVertex vertexData[6];
+	vertexData[0].x = -1.0; vertexData[0].y = -1.0; vertexData[0].s = 0.0; vertexData[0].t = 0.0;
+	vertexData[1].x = -1.0; vertexData[1].y = 1.0; vertexData[1].s = 0.0; vertexData[1].t = 1.0;
+	vertexData[2].x = 1.0; vertexData[2].y = -1.0; vertexData[2].s = 1.0; vertexData[2].t = 0.0;
+	vertexData[3].x = 1.0; vertexData[3].y = -1.0; vertexData[3].s = 1.0; vertexData[3].t = 0.0;
+	vertexData[4].x = 1.0; vertexData[4].y = 1.0; vertexData[4].s = 1.0; vertexData[4].t = 1.0;
+	vertexData[5].x = -1.0; vertexData[5].y = 1.0; vertexData[5].s = 0.0; vertexData[5].t = 1.0;
+	glBindBuffer(GL_ARRAY_BUFFER, screen);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), &vertexData[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
 
 void App::update(){
 	float x = 0.01f;
@@ -141,6 +112,14 @@ void App::render() {
 		models[i]->draw();
 	}
 	testProgram.unUse();*/
+
+	/*lights.shadowShader.use();
+	lights.updateShadows();
+	for (int i = 0; i < models.size(); i++) {
+		models[i]->draw(lights.shadowShader.getProgramID());
+	}
+	lights.shadowShader.unUse();*/
+	
 	if (!GetAsyncKeyState('Q'))
 	{
 		_deferredProgram.use();

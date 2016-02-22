@@ -2,7 +2,7 @@
 #include <fstream>
 #include <vector>
 
-GLSLprogram::GLSLprogram(): _programID(0), _vertexShader(0), _fragmentShader(0), _numAttributes(0), _frameBuffer(0), _texture(0), _specularTexture(0),
+GLSLprogram::GLSLprogram(): _programID(0), _vertexShader(0), _fragmentShader(0), _numAttributes(0), frameBuffer(0), _texture(0), _specularTexture(0),
 _normalTexture(0), _depthTexture(0), _diffuseTexture(0){
 
 }
@@ -51,8 +51,8 @@ void GLSLprogram::linkShaders() {
 }
 
 void GLSLprogram::initFrameBuffer() {
-	glGenFramebuffers(1, &_frameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+	glGenFramebuffers(1, &frameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
 	glEnable(GL_TEXTURE_2D); 
 	//glEnable(GL_DEPTH_TEST);
@@ -117,7 +117,7 @@ void GLSLprogram::use() {
 	{
 		glEnableVertexAttribArray(i);
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

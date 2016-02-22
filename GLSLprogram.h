@@ -25,12 +25,13 @@ public:
 	GLuint getTexture4() const;
 	GLuint getTexture5() const;
 	GLuint getProgramID() const;
+
+	GLuint frameBuffer;
 private:
 	GLuint _programID;
 	GLuint _vertexShader;
 	GLuint _fragmentShader;
 	
-	GLuint _frameBuffer;
 	GLuint _texture;
 	GLuint _normalTexture;
 	GLuint _depthTexture;
