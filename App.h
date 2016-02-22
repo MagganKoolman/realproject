@@ -40,6 +40,8 @@ private:
 	GLSLprogram _deferredProgram;
 	
 	GLSLprogram testProgram;
+
+	GLSLprogram _wireFrameProgram;
 public:
 	App();
 	~App();

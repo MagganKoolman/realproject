@@ -15,23 +15,44 @@ uniform mat4 Perspective;
 
 void main(){
 	vec4 c = texture(colorTex , texCoor); 
-	vec3 normal = texture(normalTex, texCoor).rgb; 
+	vec3 normal = texture(normalTex, texCoor).rgb*2-1; 
 	float depth = texture(depthTex, texCoor).r;
 	vec3 dif = texture(diffuse, texCoor).rgb;
 	vec3 spec = texture(specular, texCoor).rgb;
 
+	vec3 light = vec3(10,0,0);
+	vec4 pos = (Perspective * (vec4(texCoor.x, texCoor.y, depth, 1)*2-1));
+	pos /= pos.w;
+
+    vec3 lightDir = light - pos.xyz;
+    
+    normal = normalize(normal);
+    lightDir = normalize(lightDir);
+    
+    vec3 eyeDir = normalize(cameraPos-pos.xyz);
+    vec3 vHalfVector = reflect(-lightDir.xyz, normal);
+    
+	vec3 specularColor = spec*pow(max(dot(eyeDir,vHalfVector),0.0), 20);
+	vec3 diffureColor = dif*dot(lightDir, normal);
+
+    color = vec4(diffureColor + specularColor,1);
+	//color = vec4( (normal+1)/2, 1);
+
+	
+
+/*
 	vec3 light = vec3(0, 0, 5);
-	vec3 pos = (Perspective * vec4(texCoor, 2*depth-1, 1)).xyz;
+	vec3 pos = (Perspective * vec4(texCoor, depth, 1)).rgb ;
 	
 	vec3 lv = normalize(pos - light);
 	vec3 r = reflect(lv, normal);
-	vec3 vc = normalize( vec3(0,0,0) - pos );
+	vec3 vc = normalize(cameraPos - pos );
 
 	vec3 specularLight = spec * pow(max(dot(vc,r),0),5);
 	vec3 diffuseLight = dif * max(dot(normal, -lv),0);
-	//color = vec4(0.5*(c.rgb + diffuseLight ) + specularLight, c.a); 
+	color = vec4(0.5*(c.rgb + diffuseLight ) + specularLight, c.a); 
 
-	color = vec4(specularLight, 0); 
+	//color = vec4(specularLight, 1); */
 }
 /*
 	vec3 light = vec3(0,0,5);

@@ -118,6 +118,10 @@ void App::initShader() {
 	_deferredProgram.addAttribute("texCoorIn");
 	_deferredProgram.initFrameBuffer();
 	_deferredProgram.linkShaders();
+
+	_wireFrameProgram.compileShaders("shaders/WireframeShader.vert", "shaders/WireframeShader.frag");
+	_wireFrameProgram.addAttribute("vertexPos");
+	_wireFrameProgram.linkShaders();
 }
 
 
@@ -162,6 +166,19 @@ void App::render() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	_colorProgram.disableTextures();
 	_colorProgram.unUse();
+
+	if (GetAsyncKeyState('Q')) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		_wireFrameProgram.use();
+		_player.matrixUpdate(_wireFrameProgram.getProgramID());
+		for (int i = 0; i < models.size(); i++) {
+			models[i]->draw(_wireFrameProgram.getProgramID());
+		}
+		_wireFrameProgram.unUse();
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 	
 	SDL_GL_SwapWindow(window);
 }
