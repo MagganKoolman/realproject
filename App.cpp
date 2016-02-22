@@ -1,6 +1,7 @@
 #include "App.h"
 #include <cstddef>
 #include "Player.h"
+#include "LightSource.h"
 
 struct ScreenVertex {
 	float x, y, s, t;
@@ -83,18 +84,18 @@ void App::init()
 	
 
 	delete importer;
-	/*
+	
 	importer = new OBJimporter();
 
 	std::vector<Model*> temp;
-	importer->loadObj("models/sphere1.obj");
+	importer->loadObj("models/box.obj");
 	temp = importer->CreateTriangleData();
 	for (int i = 0; i < temp.size(); i++) {
 		models.push_back(temp[i]);
 	}
 
 	delete importer;
-	*/
+	
 	glBindBuffer(GL_ARRAY_BUFFER, screen);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), &vertexData[0], GL_STATIC_DRAW);
 	
@@ -112,6 +113,8 @@ void App::initShader() {
 	_colorProgram.addAttribute("texturePos");
 	_colorProgram.linkShaders();
 
+	//LightSource lights("shaders/ColorShader.vert", "shaders/ColorShader.frag");
+
 	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag");
 	_deferredProgram.addAttribute("vertexPos");
 	_deferredProgram.addAttribute("normal");
@@ -126,15 +129,9 @@ void App::initShader() {
 
 
 void App::update(){
-	
-	processInput();
 	float x = 0.01f;
 	_player.update(x, *window);
 	render();
-}
-
-void App::processInput() {
-	
 }
 
 void App::render() {

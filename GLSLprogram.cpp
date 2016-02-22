@@ -25,14 +25,10 @@ void GLSLprogram::compileShaders(const std::string& vertexPath, const std::strin
 	compileShader(fragmentPath, _fragmentShader);
 }
 
-void GLSLprogram::linkShaders() {
-	
-
+void GLSLprogram::linkShaders() {	
 	glAttachShader(_programID, _vertexShader);
 	glAttachShader(_programID, _fragmentShader);
-
 	glLinkProgram(_programID);
-
 	GLint success = 0;
 	glGetProgramiv(_programID, GL_LINK_STATUS, (int*)&success);
 	if (success == GL_FALSE) {
@@ -48,7 +44,6 @@ void GLSLprogram::linkShaders() {
 		
 		std::printf("%s\n", &(errorLog[0]));
 	}
-
 	glDetachShader(_programID, _vertexShader);
 	glDetachShader(_programID, _fragmentShader);
 	glDeleteShader(_vertexShader);
@@ -60,7 +55,7 @@ void GLSLprogram::initFrameBuffer() {
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 
 	glEnable(GL_TEXTURE_2D); 
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 
 	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);
@@ -92,7 +87,7 @@ void GLSLprogram::initFrameBuffer() {
 
 	glGenTextures(1, &_depthTexture);
 	glBindTexture(GL_TEXTURE_2D, _depthTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1080, 720, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, 1080, 720, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
