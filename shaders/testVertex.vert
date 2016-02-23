@@ -1,14 +1,12 @@
 #version 330 core
 
-in vec3 vertexPos;
-in vec2 texCoorIn;
-
-out vec2 texOut;
-
-uniform mat4 Camera;
-uniform mat4 Perspective;
+in vec2 position;
+in vec2 texturePos;
+out vec2 texCoor;
 
 void main(){
-	gl_Position = Perspective * Camera * vec4(vertexPos, 1.0);
-	texOut = texCoorIn;
+	texCoor = texturePos;
+	gl_Position.xy = position;
+	gl_Position.z = 0.0;
+	gl_Position.w = 1.0;
 }

@@ -4,6 +4,7 @@
 #include "Datastructs.h"
 #include "Model.h"
 #include "OBJimporter.h"
+#include "LightSource.h"
 
 #include <iostream>
 #include <SDL\SDL.h>
@@ -12,7 +13,6 @@
 #include "Player.h"
 #include "GLSLprogram.h"
 
-#include "Sprite.h"
 
 class App {
 private:
@@ -25,15 +25,14 @@ private:
 	void init();
 	void initShader();
 	void render();
-
-	Sprite testSprite;
-	Sprite testSprite2;
-	Sprite testSprite3;
+	void createScreenQuad();
 
 	std::vector<Model*> models;
 	OBJimporter* importer;
 
 	GLuint screen;
+
+	LightSource lights;
 
 	GLSLprogram _colorProgram;
 	GLSLprogram _deferredProgram;
