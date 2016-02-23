@@ -118,6 +118,7 @@ void GLSLprogram::use() {
 		glEnableVertexAttribArray(i);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+	glViewport(0, 0, 1080, 720);
 	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

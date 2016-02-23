@@ -10,8 +10,8 @@ public:
 	void init(const std::string& vertexPath, const std::string& fragmentPath);
 	
 	GLSLprogram shadowShader;
+	GLuint _shadowTex;
 private:
-	GLuint _shadowTex;	
 	GLuint _fboID;
 	
 	glm::mat4 _perspectiveMat;

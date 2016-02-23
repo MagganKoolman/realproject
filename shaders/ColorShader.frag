@@ -36,4 +36,6 @@ void main(){
 	vec3 diffureColor = dif*dot(lightDir, normal);
 
     color = c + vec4(diffureColor + specularColor,1);
+	/*float shadowAmount = texture(colorTex, vec3(texCoor, 1.0));
+	color = vec4(shadowAmount*0.5, shadowAmount, 1.0, 1.0);*/
 }
