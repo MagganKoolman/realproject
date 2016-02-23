@@ -9,9 +9,10 @@ out vec2 texOut;
 
 uniform mat4 Camera;
 uniform mat4 Perspective;
+uniform mat4 World;
 
 void main(){
-	gl_Position = Perspective * Camera * vec4(vertexPos, 1.0);
+	gl_Position = Perspective * Camera * World * vec4(vertexPos, 1.0);
 	normalOut = normal;
 	texOut = texCoorIn;
 }

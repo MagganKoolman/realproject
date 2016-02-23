@@ -91,9 +91,12 @@ void App::init()
 	importer->loadObj("models/box.obj");
 	temp = importer->CreateTriangleData();
 	for (int i = 0; i < temp.size(); i++) {
+		temp[i]->addTranslation(vec3(i+2,0,0));
 		models.push_back(temp[i]);
-	}
 
+	}
+	Model* hm = importer->getGround("height_map.bmp");
+	models.push_back(hm);
 	delete importer;
 	
 	glBindBuffer(GL_ARRAY_BUFFER, screen);

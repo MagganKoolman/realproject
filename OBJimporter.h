@@ -43,4 +43,5 @@ class OBJimporter {
 		std::vector<Model*> CreateTriangleData();
 		void loadMaterials(std::string materials);
 		GLuint CreateTexture(std::string fileName);
+		Model* getGround(std::string heightMapFile);
 };

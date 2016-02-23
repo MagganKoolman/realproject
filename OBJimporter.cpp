@@ -4,6 +4,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <SOIL\SOIL.h>
+#include <iostream>
 
 using namespace std;
 
@@ -227,5 +228,45 @@ std::vector<Model*> OBJimporter::CreateTriangleData()
 	normalVertices.clear();
 	textureCoords.clear();
 
+	return result;
+}
+
+Model* OBJimporter::getGround(std::string heightMapFile) {
+	//GLuint GText = CreateTexture("models/groundTex");
+
+	int width, height;
+	unsigned char* image;
+	image = SOIL_load_image(("models/" + heightMapFile).c_str(), &width, &height, 0, SOIL_LOAD_L);
+
+	TriangleVertex* vertices = new TriangleVertex[(int)(width*height*1.5)];
+	int index = 0;
+	for (int i = 0; i < height/2-1; i++) { 
+		for (int j = 0; j < width/2-1; j++) { //float x, y, z, nx, ny, nz, u, v;                  (float)((int)image[index++]) / 200 - 2
+			vertices[index++] = { (float)2*j, (float)((int)image[2*i*width+2*j]) / 255 -2, (float)2*i , 0,1,0, (float)2*j / width, (float)2*i / height };
+			vertices[index++] = { (float)2*j +2, (float)((int)image[2*i*width+2*j+1]) / 255-2, (float)2*i , 0,1,0, (float)(2*j+1) / width, (float)2*i / height };
+			vertices[index++] = { (float)2*j, (float)((int)image[(2*i+1)*width+j]) / 255-2, (float)2*i + 2, 0,1,0, (float)2*j / width, (float)(2*i+1)/ height };
+			vertices[index++] = { (float)2*j+2, (float)((int)image[2*i*width+2*j+1]) / 255-2, (float)2*i, 0,1,0, (float)(2*j+1) / width, (float)2*i / height };
+			vertices[index++] = { (float)2*j, (float)((int)image[(2*i+1)*width+j]) / 255-2, (float)2*i+2, 0,1,0, (float)2*j / width, (float)(2*i+1) / height };
+			vertices[index++] = { (float)2*j+2, (float)((int)image[(2*i+1)*width+j+1]) / 255-2, (float)2*i+2, 0,1,0, (float)(2*j+1) / width, (float)(2*i+1) / height };
+		}
+	}
+
+	Model* result = new Model();
+	GLuint buffid;
+	glGenBuffers(1, &buffid);
+	glBindBuffer(GL_ARRAY_BUFFER, buffid);
+	glBufferData(GL_ARRAY_BUFFER, index * sizeof(TriangleVertex), vertices, GL_STATIC_DRAW);
+	
+	result->setBUFFid(buffid);
+	result->setSize(index);
+	Material* mat  = new Material;
+	mat->Ka = vec3(1,0,0);
+	mat->Kd = vec3(0, 1, 0);
+	mat->Ks = vec3(0, 0, 1);
+	mat->materialName = "";
+	mat->texid = 0;
+	result->setMaterial(mat);
+
+	//delete[] vertices;
 	return result;
 }
