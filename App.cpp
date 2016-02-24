@@ -43,7 +43,7 @@ void App::init()
 
 	importer = new OBJimporter();
 
-	importer->loadObj("models/sphere1.obj");
+	importer->loadObj("realproject/models/sphere1.obj");
 	models = importer->CreateTriangleData();
 	
 	delete importer;
@@ -51,7 +51,7 @@ void App::init()
 	importer = new OBJimporter();
 
 	std::vector<Model*> temp;
-	importer->loadObj("models/box.obj");
+	importer->loadObj("realproject/models/box.obj");
 	temp = importer->CreateTriangleData();
 	for (int i = 0; i < temp.size(); i++) {
 		temp[i]->addTranslation(vec3(i+2,0,0));
@@ -65,26 +65,26 @@ void App::init()
 }
 
 void App::initShader() {
-	testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag");
+	testProgram.compileShaders("realproject/shaders/testVertex.vert", "realproject/shaders/testFragment.frag");
 	testProgram.addAttribute("vertexPos");
 	testProgram.addAttribute("texCoorIn");
 	testProgram.linkShaders();
 	
-	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag");
+	_colorProgram.compileShaders("realproject/shaders/ColorShader.vert", "realproject/shaders/ColorShader.frag");
 	_colorProgram.addAttribute("position");
 	_colorProgram.addAttribute("texturePos");
 	_colorProgram.linkShaders();
 
-	lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
+	//lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
 
-	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag");
+	_deferredProgram.compileShaders("realproject/shaders/DeferredVertex.vert", "realproject/shaders/DeferredFragment.frag");
 	_deferredProgram.addAttribute("vertexPos");
 	_deferredProgram.addAttribute("normal");
 	_deferredProgram.addAttribute("texCoorIn");
 	_deferredProgram.initFrameBuffer();
 	_deferredProgram.linkShaders();
 
-	_wireFrameProgram.compileShaders("shaders/WireframeShader.vert", "shaders/WireframeShader.frag");
+	_wireFrameProgram.compileShaders("realproject/shaders/WireframeShader.vert", "realproject/shaders/WireframeShader.frag");
 	_wireFrameProgram.addAttribute("vertexPos");
 	_wireFrameProgram.linkShaders();
 }
@@ -110,14 +110,14 @@ void App::update(){
 }
 
 void App::render() {
-
+	/*
 	lights.shadowShader.use();
 	lights.updateShadows();
 	for (int i = 0; i < models.size(); i++) {
 		models[i]->draw(lights.shadowShader.getProgramID());
 	}
 	
-	lights.shadowShader.unUse();
+	lights.shadowShader.unUse();*/
 
 	/*testProgram.use();
 	GLuint texLocation = glGetUniformLocation(testProgram.getProgramID(), "shadowTex");

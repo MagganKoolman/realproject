@@ -42,7 +42,7 @@ GLuint OBJimporter::CreateTexture(string fileName)
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texIndex);
-	image = SOIL_load_image(("models/" + fileName).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+	image = SOIL_load_image(("realproject/models/" + fileName).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	SOIL_free_image_data(image);
 
@@ -56,7 +56,7 @@ GLuint OBJimporter::CreateTexture(string fileName)
 
 void OBJimporter::loadMaterials(string materials)
 {
-	ifstream matFile("models/" + materials);
+	ifstream matFile("realproject/models/" + materials);
 	istringstream inputString;
 	string line, special, input, name;
 	Material* mat = new Material();
@@ -232,22 +232,22 @@ std::vector<Model*> OBJimporter::CreateTriangleData()
 }
 
 Model* OBJimporter::getGround(std::string heightMapFile) {
-	//GLuint GText = CreateTexture("models/groundTex");
+	GLuint GText = CreateTexture("head_512.png");
 
 	int width, height;
 	unsigned char* image;
-	image = SOIL_load_image(("models/" + heightMapFile).c_str(), &width, &height, 0, SOIL_LOAD_L);
+	image = SOIL_load_image(("realproject/models/" + heightMapFile).c_str(), &width, &height, 0, SOIL_LOAD_L);
 
 	TriangleVertex* vertices = new TriangleVertex[(int)(width*height*1.5)];
 	int index = 0;
 	for (int i = 0; i < height/2-1; i++) { 
 		for (int j = 0; j < width/2-1; j++) { //float x, y, z, nx, ny, nz, u, v;                  (float)((int)image[index++]) / 200 - 2
-			vertices[index++] = { (float)2*j, (float)((int)image[2*i*width+2*j]) / 255 -2, (float)2*i , 0,1,0, (float)2*j / width, (float)2*i / height };
-			vertices[index++] = { (float)2*j +2, (float)((int)image[2*i*width+2*j+1]) / 255-2, (float)2*i , 0,1,0, (float)(2*j+1) / width, (float)2*i / height };
-			vertices[index++] = { (float)2*j, (float)((int)image[(2*i+1)*width+j]) / 255-2, (float)2*i + 2, 0,1,0, (float)2*j / width, (float)(2*i+1)/ height };
-			vertices[index++] = { (float)2*j+2, (float)((int)image[2*i*width+2*j+1]) / 255-2, (float)2*i, 0,1,0, (float)(2*j+1) / width, (float)2*i / height };
-			vertices[index++] = { (float)2*j, (float)((int)image[(2*i+1)*width+j]) / 255-2, (float)2*i+2, 0,1,0, (float)2*j / width, (float)(2*i+1) / height };
-			vertices[index++] = { (float)2*j+2, (float)((int)image[(2*i+1)*width+j+1]) / 255-2, (float)2*i+2, 0,1,0, (float)(2*j+1) / width, (float)(2*i+1) / height };
+			vertices[index++] = { ((float)2*j - width/2)/5.0f, (float)((int)image[2*i*width+2*j]) / 25 -5, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)2*j / width, (float)2*i / height };
+			vertices[index++] = { ((float)2*j +2 - width / 2) / 5.0f, (float)((int)image[2*i*width+2*(j+1)]) / 25-5, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)(2*(j+1)) / width, (float)2*i / height };
+			vertices[index++] = { ((float)2*j - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*j]) / 25-5, ((float)2*i + 2 - height / 2) / 5.0f, 0,1,0, (float)2*j / width, (float)(2*(i+1))/ height };
+			vertices[index++] = { ((float)2*j+2 - width / 2) / 5.0f, (float)((int)image[2*i*width+2*(j+1)]) / 25-5, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)(2*(j+1)) / width, (float)2*i / height };
+			vertices[index++] = { ((float)2*j - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*j]) / 25-5, ((float)2*i+2 - height / 2) / 5.0f, 0,1,0, (float)2*j / width, (float)(2*(i+1)) / height };
+			vertices[index++] = { ((float)2*j+2 - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*(j+1)]) / 25-5, ((float)2*i+2 - height / 2) / 5.0f, 0,1,0, (float)(2*(j+1)) / width, (float)(2*(i+1)) / height };
 		}
 	}
 
@@ -260,13 +260,13 @@ Model* OBJimporter::getGround(std::string heightMapFile) {
 	result->setBUFFid(buffid);
 	result->setSize(index);
 	Material* mat  = new Material;
-	mat->Ka = vec3(1,0,0);
-	mat->Kd = vec3(0, 1, 0);
-	mat->Ks = vec3(0, 0, 1);
+	mat->Ka = vec3(0.03,0.08,0.05);
+	mat->Kd = vec3(0, 0, 0);
+	mat->Ks = vec3(0, 0, 0);
 	mat->materialName = "";
-	mat->texid = 0;
+	mat->texid = GText;
 	result->setMaterial(mat);
 
-	//delete[] vertices;
+	delete[] vertices;
 	return result;
 }
