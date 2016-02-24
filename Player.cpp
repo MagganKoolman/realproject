@@ -12,7 +12,7 @@ Player::Player() {
 	this->_lookat = { 0,0,-1 };
 	this->_angleHor = 0.01f;
 	this->_angleVer = 0.00f;
-	this->_perspectiveMat = glm::perspective(45.0f, 1080.f / 720.0f, 0.5f, 20.0f);
+	this->_perspectiveMat = glm::perspective(45.0f, 1080.f / 720.0f, 0.5f, 50.0f);
 	this->_viewMat = glm::lookAt(_position, _lookat, glm::vec3(0, 1, 0));
 }
 

@@ -43,7 +43,7 @@ void App::init()
 
 	importer = new OBJimporter();
 
-	importer->loadObj("realproject/models/sphere1.obj");
+	importer->loadObj("models/sphere1.obj");
 	models = importer->CreateTriangleData();
 	
 	delete importer;
@@ -51,40 +51,40 @@ void App::init()
 	importer = new OBJimporter();
 
 	std::vector<Model*> temp;
-	importer->loadObj("realproject/models/box.obj");
+	importer->loadObj("models/box.obj");
 	temp = importer->CreateTriangleData();
 	for (int i = 0; i < temp.size(); i++) {
 		temp[i]->addTranslation(vec3(i+2,0,0));
 		models.push_back(temp[i]);
 
 	}
-	Model* hm = importer->getGround("height_map.bmp");
+	Model* hm = importer->getGround("height_map2.bmp");
 	models.push_back(hm);
 	delete importer;
 	createScreenQuad();
 }
 
 void App::initShader() {
-	testProgram.compileShaders("realproject/shaders/testVertex.vert", "realproject/shaders/testFragment.frag");
+	testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag");
 	testProgram.addAttribute("vertexPos");
 	testProgram.addAttribute("texCoorIn");
 	testProgram.linkShaders();
 	
-	_colorProgram.compileShaders("realproject/shaders/ColorShader.vert", "realproject/shaders/ColorShader.frag");
+	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag");
 	_colorProgram.addAttribute("position");
 	_colorProgram.addAttribute("texturePos");
 	_colorProgram.linkShaders();
 
 	//lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
 
-	_deferredProgram.compileShaders("realproject/shaders/DeferredVertex.vert", "realproject/shaders/DeferredFragment.frag");
+	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag");
 	_deferredProgram.addAttribute("vertexPos");
 	_deferredProgram.addAttribute("normal");
 	_deferredProgram.addAttribute("texCoorIn");
 	_deferredProgram.initFrameBuffer();
 	_deferredProgram.linkShaders();
 
-	_wireFrameProgram.compileShaders("realproject/shaders/WireframeShader.vert", "realproject/shaders/WireframeShader.frag");
+	_wireFrameProgram.compileShaders("shaders/WireframeShader.vert", "shaders/WireframeShader.frag");
 	_wireFrameProgram.addAttribute("vertexPos");
 	_wireFrameProgram.linkShaders();
 }

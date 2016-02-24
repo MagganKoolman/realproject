@@ -42,7 +42,7 @@ GLuint OBJimporter::CreateTexture(string fileName)
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texIndex);
-	image = SOIL_load_image(("realproject/models/" + fileName).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+	image = SOIL_load_image(("models/" + fileName).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	SOIL_free_image_data(image);
 
@@ -56,7 +56,7 @@ GLuint OBJimporter::CreateTexture(string fileName)
 
 void OBJimporter::loadMaterials(string materials)
 {
-	ifstream matFile("realproject/models/" + materials);
+	ifstream matFile("models/" + materials);
 	istringstream inputString;
 	string line, special, input, name;
 	Material* mat = new Material();
@@ -232,11 +232,11 @@ std::vector<Model*> OBJimporter::CreateTriangleData()
 }
 
 Model* OBJimporter::getGround(std::string heightMapFile) {
-	GLuint GText = CreateTexture("head_512.png");
+	GLuint GText = CreateTexture("Gtexture1.png");
 
 	int width, height;
 	unsigned char* image;
-	image = SOIL_load_image(("realproject/models/" + heightMapFile).c_str(), &width, &height, 0, SOIL_LOAD_L);
+	image = SOIL_load_image(("models/" + heightMapFile).c_str(), &width, &height, 0, SOIL_LOAD_L);
 
 	TriangleVertex* vertices = new TriangleVertex[(int)(width*height*1.5)];
 	int index = 0;
