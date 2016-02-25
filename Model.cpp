@@ -24,6 +24,9 @@ void Model::addTranslation(glm::vec3 translation) {
 	this->worldMat = glm::translate(worldMat, translation);
 }
 void Model::draw(GLuint spID) {
+	GLuint texLocation = glGetUniformLocation(spID, "texSampler");
+	glUniform1i(texLocation, 0);
+	glActiveTexture(GL_TEXTURE0);
 	glBindBuffer(GL_ARRAY_BUFFER, _BUFFid);
 	glBindTexture(GL_TEXTURE_2D, _mat->texid);
 	

@@ -8,11 +8,11 @@ const float PI = 3.1415f;
 const float halfPI = PI / 2;
 
 Player::Player() {
-	this->_position = { 0,0,0 };
-	this->_lookat = { 0,0,-1 };
+	this->_position = { 8,0,0 };
+	this->_lookat = { -1,0, 0 };
 	this->_angleHor = 0.01f;
 	this->_angleVer = 0.00f;
-	this->_perspectiveMat = glm::perspective(45.0f, 1080.f / 720.0f, 0.5f, 50.0f);
+	this->_perspectiveMat = glm::perspective(45.0f, 1080.f / 720.0f, 0.5f, 30.0f);
 	this->_viewMat = glm::lookAt(_position, _lookat, glm::vec3(0, 1, 0));
 }
 
@@ -34,6 +34,7 @@ void Player::update(float dt, SDL_Window &window) {
 	if (GetAsyncKeyState('D')) {
 		glm::vec3 rightVec = glm::cross(glm::vec3(0, 1, 0), _lookat);
 		_position = _position - rightVec*dt;
+		std::cout << _lookat.z << "  " << _lookat.x << "  "<< _lookat.y <<  "\t" << _position.x << "  " << _position.y << "  " << _position.z << "\n";
 	}
 	SDL_Event evnt;
 	while (SDL_PollEvent(&evnt)) {		
@@ -65,12 +66,14 @@ void Player::matrixUpdate(const GLuint &shaderProgram) {
 
 	glUniformMatrix4fv(perspMatrix, 1, GL_FALSE, &_perspectiveMat[0][0]);
 	glUniformMatrix4fv(camMatrix, 1, GL_FALSE, &_viewMat[0][0]);
+
+	
 	
 }
 
 void Player::matrixUpdate2(const GLuint &shaderProgram) {
 	GLuint camMatrix = glGetUniformLocation(shaderProgram, "cameraPos");
-	GLuint perspMatrix = glGetUniformLocation(shaderProgram, "Perspective");
+	GLuint perspMatrix = glGetUniformLocation(shaderProgram, "invPerspective");
 
 	glm::mat4x4 invPM = glm::inverse(_perspectiveMat * _viewMat);
 	glm::vec3 viewDir = glm::normalize(_lookat - _position);
