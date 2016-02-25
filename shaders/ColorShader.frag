@@ -13,6 +13,7 @@ uniform sampler2D specular;
 uniform sampler2D shadowMap;
 
 uniform vec3 cameraPos;
+uniform vec3 lightPos;
 uniform mat4 invPerspective;
 uniform mat4 LightWP;
 
@@ -23,7 +24,6 @@ void main(){
 	vec3 dif = texture(diffuse, texCoor).rgb;
 	vec3 spec = texture(specular, texCoor).rgb;
 
-	vec3 light = vec3(8,0,0);
 	vec4 pos = (invPerspective * (vec4(texCoor.x, texCoor.y, depth, 1)*2-1));
 	pos /= pos.w;
 
@@ -33,7 +33,8 @@ void main(){
 	float shadow = 0.0;
 	if (shadowPos.z - 0.0001 < shadowDepth * 2 - 1)
 		shadow = 1.0;
-    vec3 lightDir = light - pos.xyz;   
+    
+	vec3 lightDir = lightPos - pos.xyz;   
     normal = normalize(normal);
     lightDir = normalize(lightDir);
     

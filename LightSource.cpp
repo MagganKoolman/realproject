@@ -10,6 +10,12 @@ LightSource::LightSource(): _shadowTex(0){
 
 	_perspectiveMat = glm::perspective(45.0f, 1080.f / 720.0f, 3.0f, 30.0f);
 	_viewMat = glm::lookAt(light.position, light.direction, glm::vec3(0, 1, 0));
+
+	bias_matrix = glm::mat4(glm::vec4(0.5f, 0.0f, 0.0f, 0.0f),
+		glm::vec4(0.0f, 0.5f, 0.0f, 0.0f),
+		glm::vec4(0.0f, 0.0f, 0.5f, 0.0f),
+		glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+		) * _perspectiveMat * _viewMat;
 }
 
 LightSource::~LightSource() {
@@ -32,10 +38,7 @@ void LightSource::initTex() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glBindTexture(GL_TEXTURE_2D, 0);
-
 }
 
 void LightSource::initFrameBuffer() {
@@ -49,18 +52,17 @@ void LightSource::initFrameBuffer() {
 }
 
 void LightSource::updateShadows() {
-	_viewMat = glm::lookAt(light.position, light.direction, glm::vec3(0, 1, 0));
-	glm::mat4x4 ViewPerspectiveMat = _perspectiveMat * _viewMat;
 	GLuint VPmatrix = glGetUniformLocation(shadowShader.getProgramID(), "VPmatrix");
-	glUniformMatrix4fv(VPmatrix, 1, GL_FALSE, &ViewPerspectiveMat[0][0]);
-
+	glUniformMatrix4fv(VPmatrix, 1, GL_FALSE, &bias_matrix[0][0]);
 }
 
 void LightSource::activateShadowMap(const GLuint &shaderProgram)
 {
-	glm::mat4x4 ViewPerspectiveMat = _perspectiveMat * _viewMat;
 	GLuint WPmatrix = glGetUniformLocation(shaderProgram, "LightWP");
-	glUniformMatrix4fv(WPmatrix, 1, GL_FALSE, &ViewPerspectiveMat[0][0]);
+	glUniformMatrix4fv(WPmatrix, 1, GL_FALSE, &bias_matrix[0][0]);
+
+	GLuint lightPosition = glGetUniformLocation(shaderProgram, "lightPos");
+	glUniform3fv(lightPosition, 1, &light.position[0]);
 
 	GLuint texLocation = glGetUniformLocation(shaderProgram, "shadowMap");
 	glUniform1i(texLocation, 5);

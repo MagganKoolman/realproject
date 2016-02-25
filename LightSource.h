@@ -17,6 +17,7 @@ public:
 private:
 	GLuint _fboID;
 	
+	glm::mat4 bias_matrix;
 	glm::mat4 _perspectiveMat;
 	glm::mat4 _viewMat;
 

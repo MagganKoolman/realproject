@@ -126,7 +126,9 @@ void App::render() {
 		for (int i = 0; i < models.size(); i++) {
 			models[i]->draw(_deferredProgram.getProgramID());
 		}
-	
+		
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(2.0f, 4.0f);
 		_deferredProgram.unUse();
 		_colorProgram.use();		
 		_colorProgram.enableTextures(_deferredProgram);
@@ -138,6 +140,7 @@ void App::render() {
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glDisable(GL_POLYGON_OFFSET_FILL);
 		_colorProgram.disableTextures();
 		lights.deActivateShadowMap(_colorProgram.getProgramID());
 		_colorProgram.unUse();
