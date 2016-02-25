@@ -21,4 +21,7 @@ public:
 	void setSize(int s);
 	void draw(GLuint spID);
 	void addTranslation(glm::vec3 translation);
+	Material* getMat();
+	GLuint getBuffID();
+	int getSize();
 };

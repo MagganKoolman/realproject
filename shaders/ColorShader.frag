@@ -20,7 +20,7 @@ void main(){
 	vec3 dif = texture(diffuse, texCoor).rgb;
 	vec3 spec = texture(specular, texCoor).rgb;
 
-	vec3 light = vec3(10,0,5);
+	vec3 light = vec3(2,0,2);
 	vec4 pos = (Perspective * (vec4(texCoor.x, texCoor.y, depth, 1)*2-1));
 	pos /= pos.w;
 
