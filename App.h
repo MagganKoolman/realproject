@@ -32,7 +32,7 @@ private:
 
 	GLuint screen;
 
-	//LightSource lights;
+	LightSource lights;
 
 	GLSLprogram _colorProgram;
 	GLSLprogram _deferredProgram;

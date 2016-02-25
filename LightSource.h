@@ -8,9 +8,12 @@ public:
 
 	void updateShadows();
 	void init(const std::string& vertexPath, const std::string& fragmentPath);
+	void activateShadowMap(const GLuint &shaderProgram);
+	void deActivateShadowMap(const GLuint &shaderProgram);
 	
 	GLSLprogram shadowShader;
 	GLuint _shadowTex;
+	
 private:
 	GLuint _fboID;
 	

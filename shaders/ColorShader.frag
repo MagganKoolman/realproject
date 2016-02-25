@@ -10,8 +10,11 @@ uniform sampler2D depthTex;
 uniform sampler2D diffuse;
 uniform sampler2D specular;
 
+uniform sampler2D shadowMap;
+
 uniform vec3 cameraPos;
-uniform mat4 Perspective;
+uniform mat4 invPerspective;
+uniform mat4 LightWP;
 
 void main(){
 	vec4 c = texture(colorTex , texCoor); 
@@ -20,12 +23,17 @@ void main(){
 	vec3 dif = texture(diffuse, texCoor).rgb;
 	vec3 spec = texture(specular, texCoor).rgb;
 
-	vec3 light = vec3(2,0,2);
-	vec4 pos = (Perspective * (vec4(texCoor.x, texCoor.y, depth, 1)*2-1));
+	vec3 light = vec3(8,0,0);
+	vec4 pos = (invPerspective * (vec4(texCoor.x, texCoor.y, depth, 1)*2-1));
 	pos /= pos.w;
 
+	vec4 shadowPos = LightWP * pos;
+	shadowPos /= shadowPos.w;
+	float shadowDepth = texture(shadowMap, vec2( shadowPos.x * 0.5 + 0.5, shadowPos.y * 0.5 + 0.5)).r;
+	float shadow = 0.0;
+	if (shadowPos.z - 0.0001 < shadowDepth * 2 - 1)
+		shadow = 1.0;
     vec3 lightDir = light - pos.xyz;
-    
     normal = normalize(normal);
     lightDir = normalize(lightDir);
     
@@ -33,9 +41,7 @@ void main(){
     vec3 vHalfVector = reflect(-lightDir.xyz, normal);
     
 	vec3 specularColor = spec*pow(max(dot(eyeDir,vHalfVector),0.0), 20);
-	vec3 diffuseColor = dif*dot(lightDir, normal);
+	vec3 diffuseColor = max(dif*dot(lightDir, normal), 0.0);
 
-    color = c + vec4(0.4*(diffuseColor + specularColor),1);
-	/*float shadowAmount = texture(colorTex, vec3(texCoor, 1.0));
-	color = vec4(shadowAmount*0.5, shadowAmount, 1.0, 1.0);*/
+    color = c + vec4(0.4*(diffuseColor + specularColor),1) * shadow;
 }

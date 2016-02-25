@@ -91,17 +91,17 @@ void App::init()
 }
 
 void App::initShader() {
-	testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag");
+	/*testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag");
 	testProgram.addAttribute("vertexPos");
 	testProgram.addAttribute("texCoorIn");
-	testProgram.linkShaders();
+	testProgram.linkShaders();*/
 	
 	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag");
 	_colorProgram.addAttribute("position");
 	_colorProgram.addAttribute("texturePos");
 	_colorProgram.linkShaders();
 
-	//lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
+	lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
 
 	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag");
 	_deferredProgram.addAttribute("vertexPos");
@@ -136,55 +136,37 @@ void App::update(){
 }
 
 void App::render() {
-	/*
+	
 	lights.shadowShader.use();
 	lights.updateShadows();
 	for (int i = 0; i < models.size(); i++) {
 		models[i]->draw(lights.shadowShader.getProgramID());
 	}
 	
-	lights.shadowShader.unUse();*/
-
-	/*testProgram.use();
-	GLuint texLocation = glGetUniformLocation(testProgram.getProgramID(), "shadowTex");
-	glUniform1i(texLocation, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, lights._shadowTex);
-	
-	glBindBuffer(GL_ARRAY_BUFFER, screen);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	testProgram.unUse();*/
+	lights.shadowShader.unUse();
 	
 	if (!GetAsyncKeyState('Q'))
 	{
-	_deferredProgram.use();
-	_player.matrixUpdate(_deferredProgram.getProgramID());
+		_deferredProgram.use();
+		_player.matrixUpdate(_deferredProgram.getProgramID());
+		for (int i = 0; i < models.size(); i++) {
+			models[i]->draw(_deferredProgram.getProgramID());
+		}
 	
-	for (int i = 0; i < models.size(); i++) {
-		models[i]->draw(_deferredProgram.getProgramID());
-	}
-	
-	_deferredProgram.unUse();
-	_colorProgram.use();		
-	_colorProgram.enableTextures(_deferredProgram);
+		_deferredProgram.unUse();
+		_colorProgram.use();		
+		_colorProgram.enableTextures(_deferredProgram);
+		_player.matrixUpdate2(_colorProgram.getProgramID());
+		lights.activateShadowMap(_colorProgram.getProgramID());
+		glBindBuffer(GL_ARRAY_BUFFER, screen);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));	
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
-	_player.matrixUpdate2(_colorProgram.getProgramID());
-
-	glBindBuffer(GL_ARRAY_BUFFER, screen);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));	
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	_colorProgram.disableTextures();
-	_colorProgram.unUse();
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		_colorProgram.disableTextures();
+		lights.deActivateShadowMap(_colorProgram.getProgramID());
+		_colorProgram.unUse();
 	}
 	else{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
