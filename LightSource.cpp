@@ -5,7 +5,7 @@
 
 LightSource::LightSource(): _shadowTex(0){
 	
-	light.position = glm::vec3(8, 0,  0);
+	light.position = glm::vec3(10, 5,  0);
 	light.direction = glm::vec3(-1, 0, 0);
 
 	_perspectiveMat = glm::perspective(45.0f, 1080.f / 720.0f, 3.0f, 30.0f);

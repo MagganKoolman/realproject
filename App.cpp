@@ -130,7 +130,7 @@ void App::createScreenQuad() {
 }
 
 void App::update(){
-	float x = 0.01f;
+	float x = 0.1f;
 	_player.update(x, *window);
 	render();
 }
