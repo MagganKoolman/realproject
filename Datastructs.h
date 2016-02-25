@@ -14,6 +14,7 @@ struct Material {
 	glm::vec3 Ka, Kd, Ks;
 	std::string materialName;
 	GLuint texid;
+	int pointers;
 };
 
 struct TriangleVertex

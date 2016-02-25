@@ -5,9 +5,13 @@ Model::Model(): _VBOid(0), _mat(nullptr) {
 }
 
 Model::~Model() {
-	delete this->_mat;
+	if (_mat->pointers <= 1)
+		delete this->_mat;
+	else
+		_mat->pointers--;
 }
 void Model::setMaterial(Material* material) {
+	material->pointers++;
 	this->_mat = material;
 }
 void Model::setVBOid(GLuint vbo) {
@@ -20,6 +24,15 @@ void Model::setSize(int s) {
 	this->size = s;
 }
 
+Material* Model::getMat() {
+	return this->_mat;
+}
+GLuint Model::getBuffID() {
+	return this->_BUFFid;
+}
+int Model::getSize() {
+	return this->size;
+}
 void Model::addTranslation(glm::vec3 translation) {
 	this->worldMat = glm::translate(worldMat, translation);
 }

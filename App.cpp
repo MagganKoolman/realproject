@@ -45,12 +45,38 @@ void App::init()
 
 	importer->loadObj("models/sphere1.obj");
 	models = importer->CreateTriangleData();
-	
+	models[0]->addTranslation(vec3(0,0.5,0));
 	delete importer;
-	
-	importer = new OBJimporter();
 
+	//skapa 2dra bollen
+
+	Model* boll2 = new Model();
+	Material* tempMat = models[0]->getMat();
+	boll2->setMaterial(tempMat);
+	boll2->setBUFFid(models[0]->getBuffID());
+	boll2->setSize(models[0]->getSize());
+	boll2->addTranslation(vec3(4,0.5,0));
+	models.push_back(boll2);
+
+	//3dje:
+
+	Model* boll3 = new Model();
+	boll3->setMaterial(tempMat);
+	boll3->setBUFFid(models[0]->getBuffID());
+	boll3->setSize(models[0]->getSize());
+	boll3->addTranslation(vec3(0, 0.5, 3));
+	models.push_back(boll3);
+	//4de:
+	Model* boll4 = new Model();
+	boll4->setMaterial(tempMat);
+	boll4->setBUFFid(models[0]->getBuffID());
+	boll4->setSize(models[0]->getSize());
+	boll4->addTranslation(vec3(3, 0.5, 3));
+	models.push_back(boll4);
+
+	importer = new OBJimporter();
 	std::vector<Model*> temp;
+
 	importer->loadObj("models/box.obj");
 	temp = importer->CreateTriangleData();
 	for (int i = 0; i < temp.size(); i++) {
