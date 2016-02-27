@@ -242,8 +242,9 @@ Model* OBJimporter::getGround(std::string heightMapFile) {
 	int index = 0;
 	for (int i = 0; i < height/2-1; i++) { 
 		for (int j = 0; j < width/2-1; j++) { //float x, y, z, nx, ny, nz, u, v;                  (float)((int)image[index++]) / 200 - 2
+			vertices[index++] = { ((float)2 * j + 2 - width / 2) / 5.0f, (float)((int)image[2 * i*width + 2 * (j + 1)]) / 25 - 0.5f, ((float)2 * i - height / 2) / 5.0f, 0,1,0, (float)(2 * (j + 1)) / width, (float)2 * i / height };
 			vertices[index++] = { ((float)2*j - width/2)/5.0f, (float)((int)image[2*i*width+2*j]) / 25-0.5f, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)2*j / width, (float)2*i / height };
-			vertices[index++] = { ((float)2*j +2 - width / 2) / 5.0f, (float)((int)image[2*i*width+2*(j+1)]) / 25 - 0.5f, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)(2*(j+1)) / width, (float)2*i / height };
+			
 			vertices[index++] = { ((float)2*j - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*j]) / 25 - 0.5f, ((float)2*i + 2 - height / 2) / 5.0f, 0,1,0, (float)2*j / width, (float)(2*(i+1))/ height };
 			vertices[index++] = { ((float)2*j+2 - width / 2) / 5.0f, (float)((int)image[2*i*width+2*(j+1)]) / 25 - 0.5f, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)(2*(j+1)) / width, (float)2*i / height };
 			vertices[index++] = { ((float)2*j - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*j]) / 25 - 0.5f, ((float)2*i+2 - height / 2) / 5.0f, 0,1,0, (float)2*j / width, (float)(2*(i+1)) / height };

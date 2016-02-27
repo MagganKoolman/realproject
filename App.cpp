@@ -49,7 +49,7 @@ void App::init()
 	delete importer;
 
 	//skapa 2dra bollen
-
+/*
 	Model* boll2 = new Model();
 	Material* tempMat = models[0]->getMat();
 	boll2->setMaterial(tempMat);
@@ -73,7 +73,7 @@ void App::init()
 	boll4->setSize(models[0]->getSize());
 	boll4->addTranslation(vec3(3, 0.5, 3));
 	models.push_back(boll4);
-
+	*/
 	importer = new OBJimporter();
 	std::vector<Model*> temp;
 

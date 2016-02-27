@@ -45,4 +45,5 @@ void main(){
 	vec3 diffuseColor = max(dif*dot(lightDir, normal), 0.0);
 
     color = c  + vec4(0.4*(diffuseColor + specularColor),1) * shadow;
+	//color = vec4(texture(normalTex, texCoor).rgb * 2 -1, 1.0);
 }

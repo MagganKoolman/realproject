@@ -16,10 +16,7 @@ uniform vec3 specular;
 
 void main(){
 	color = texture(texSampler, vec2(texOut2.s, 1- texOut2.t)) + vec4(ambient, 0.0);
-
-	vec3 normal = normalize(normalOut2);
-
-	normalTex = vec4(normal*0.5+0.5,1.0);
+	normalTex = vec4(normalOut2*0.5+0.5,1.0);
 	specularTex = vec4(specular,1.0).rgb;
 	diffuseTex = vec4(diffuse,1.0).rgb;
 }
