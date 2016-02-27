@@ -66,9 +66,6 @@ void Player::matrixUpdate(const GLuint &shaderProgram) {
 
 	glUniformMatrix4fv(perspMatrix, 1, GL_FALSE, &_perspectiveMat[0][0]);
 	glUniformMatrix4fv(camMatrix, 1, GL_FALSE, &_viewMat[0][0]);
-
-	
-	
 }
 
 void Player::matrixUpdate2(const GLuint &shaderProgram) {
