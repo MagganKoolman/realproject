@@ -8,7 +8,7 @@ public:
 	GLSLprogram();
 	~GLSLprogram();
 	
-	void compileShaders(const std::string& vertexPath, const std::string& fragmentPath);
+	void compileShaders(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath);
 	void linkShaders();
 	void addAttribute(const std::string& attributeName);
 	void initFrameBuffer();
@@ -31,6 +31,7 @@ private:
 	GLuint _programID;
 	GLuint _vertexShader;
 	GLuint _fragmentShader;
+	GLuint _geometryShader;
 	
 	GLuint _texture;
 	GLuint _normalTexture;

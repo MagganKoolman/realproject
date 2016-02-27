@@ -3,7 +3,7 @@
 #include <vector>
 
 GLSLprogram::GLSLprogram(): _programID(0), _vertexShader(0), _fragmentShader(0), _numAttributes(0), frameBuffer(0), _texture(0), _specularTexture(0),
-_normalTexture(0), _depthTexture(0), _diffuseTexture(0){
+_normalTexture(0), _depthTexture(0), _diffuseTexture(0), _geometryShader(0){
 
 }
 
@@ -11,7 +11,7 @@ GLSLprogram::~GLSLprogram() {
 
 }
 
-void GLSLprogram::compileShaders(const std::string& vertexPath, const std::string& fragmentPath) {
+void GLSLprogram::compileShaders(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath) {
 	_programID = glCreateProgram();
 	_vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	if (_vertexShader == 0) {
@@ -21,12 +21,22 @@ void GLSLprogram::compileShaders(const std::string& vertexPath, const std::strin
 	if (_fragmentShader == 0) {
 		std::cout << "Fragment shader fucka!";
 	}
-	compileShader(vertexPath, _vertexShader);
+	if (geometryPath != " ")
+	{
+		_geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+		if (_geometryShader == 0) {
+			std::cout << "Geometry shader fucka!";
+		}
+		compileShader(geometryPath, _geometryShader);
+	}
+	compileShader(vertexPath, _vertexShader);	
 	compileShader(fragmentPath, _fragmentShader);
 }
 
 void GLSLprogram::linkShaders() {	
 	glAttachShader(_programID, _vertexShader);
+	if(_geometryShader != 0)
+		glAttachShader(_programID, _geometryShader);
 	glAttachShader(_programID, _fragmentShader);
 	glLinkProgram(_programID);
 	GLint success = 0;
@@ -55,7 +65,6 @@ void GLSLprogram::initFrameBuffer() {
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
 	glEnable(GL_TEXTURE_2D); 
-	//glEnable(GL_DEPTH_TEST);
 
 	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);

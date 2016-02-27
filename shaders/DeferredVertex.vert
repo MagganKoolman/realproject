@@ -1,4 +1,4 @@
-#version 330 core
+#version 400 core
 
 in vec3 vertexPos;
 in vec3 normal;
@@ -13,6 +13,6 @@ uniform mat4 World;
 
 void main(){
 	gl_Position = Perspective * Camera * World * vec4(vertexPos, 1.0);
-	normalOut = normal;
-	texOut = texCoorIn;
+	normalOut2 = normal;
+	texOut2 = texCoorIn;
 }

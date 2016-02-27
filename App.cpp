@@ -96,21 +96,21 @@ void App::initShader() {
 	testProgram.addAttribute("texCoorIn");
 	testProgram.linkShaders();*/
 	
-	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag");
+	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag", " ");
 	_colorProgram.addAttribute("position");
 	_colorProgram.addAttribute("texturePos");
 	_colorProgram.linkShaders();
 
 	lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
 
-	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag");
+	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag", "shaders/DeferredGeometry.geo");
 	_deferredProgram.addAttribute("vertexPos");
 	_deferredProgram.addAttribute("normal");
 	_deferredProgram.addAttribute("texCoorIn");
 	_deferredProgram.initFrameBuffer();
 	_deferredProgram.linkShaders();
 
-	_wireFrameProgram.compileShaders("shaders/WireframeShader.vert", "shaders/WireframeShader.frag");
+	_wireFrameProgram.compileShaders("shaders/WireframeShader.vert", "shaders/WireframeShader.frag", " ");
 	_wireFrameProgram.addAttribute("vertexPos");
 	_wireFrameProgram.linkShaders();
 }
