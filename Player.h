@@ -10,7 +10,7 @@ public:
 	void update(float dt, SDL_Window &window);
 	void matrixUpdate(const GLuint &shaderProgram);
 	void matrixUpdate2(const GLuint &shaderProgram);
-
+	void setHM(unsigned char* hm);
 private:
 	glm::mat3x3 _rotY;
 	glm::mat3x3 _rotX;
@@ -22,5 +22,5 @@ private:
 	glm::mat4 _perspectiveMat;
 	glm::mat4 _viewMat;
 	
-	
+	unsigned char* heightMap;
 };

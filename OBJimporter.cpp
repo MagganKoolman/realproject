@@ -231,18 +231,21 @@ std::vector<Model*> OBJimporter::CreateTriangleData()
 	return result;
 }
 
-Model* OBJimporter::getGround(std::string heightMapFile) {
+Model* OBJimporter::getGround(std::string heightMapFile, unsigned char* &hm) {
 	GLuint GText = CreateTexture("Gtexture1.png");
 
 	int width, height;
 	unsigned char* image;
 	image = SOIL_load_image(("models/" + heightMapFile).c_str(), &width, &height, 0, SOIL_LOAD_L);
 
-	TriangleVertex* vertices = new TriangleVertex[(int)(width*height*1.5)];
+	//hm = new unsigned char[width*height/4];
+	hm = image;
+	TriangleVertex* vertices = new TriangleVertex[(int)((width-1)*(height-1)*6)];
 	int index = 0;
 	for (int i = 0; i < height/2-1; i++) { 
-		for (int j = 0; j < width/2-1; j++) { //float x, y, z, nx, ny, nz, u, v;                  (float)((int)image[index++]) / 200 - 2
-			vertices[index++] = { ((float)2*j - width/2)/5.0f, (float)((int)image[2*i*width+2*j]) / 25-0.5f, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)2*j / width, (float)2*i / height };
+		for (int j = 0; j < width/2; j++) { //float x, y, z, nx, ny, nz, u, v;                  (float)((int)image[index++]) / 200 - 2
+			//hm[i*(width / 2) + j] = image[2 * i*width + 2 * j];
+			vertices[index++] = { ((float)2*j - width/2)/5.0f, (float)((int)image[2*i*width+2*j]) / 25-0.5f, ((float)2*i - height/2)/5.0f, 0,1,0, (float)2*j / width, (float)2*i / height };
 			vertices[index++] = { ((float)2*j +2 - width / 2) / 5.0f, (float)((int)image[2*i*width+2*(j+1)]) / 25 - 0.5f, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)(2*(j+1)) / width, (float)2*i / height };
 			vertices[index++] = { ((float)2*j - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*j]) / 25 - 0.5f, ((float)2*i + 2 - height / 2) / 5.0f, 0,1,0, (float)2*j / width, (float)(2*(i+1))/ height };
 			vertices[index++] = { ((float)2*j+2 - width / 2) / 5.0f, (float)((int)image[2*i*width+2*(j+1)]) / 25 - 0.5f, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)(2*(j+1)) / width, (float)2*i / height };
@@ -260,14 +263,14 @@ Model* OBJimporter::getGround(std::string heightMapFile) {
 	result->setBUFFid(buffid);
 	result->setSize(index);
 	Material* mat  = new Material;
-	mat->Ka = vec3(0.03,0.08,0.05);
-	mat->Kd = vec3(0, 0, 0);
+	mat->Ka = vec3(0.00,0.00,0.00);
+	mat->Kd = vec3(0.4, 0.4, 0.4);
 	mat->Ks = vec3(0, 0, 0);
 	mat->materialName = "";
 	mat->texid = GText;
 	result->setMaterial(mat);
 
-	delete[] image;
+	//delete[] image;
 	delete[] vertices;
 	return result;
 }

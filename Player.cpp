@@ -8,7 +8,7 @@ const float PI = 3.1415f;
 const float halfPI = PI / 2;
 
 Player::Player() {
-	this->_position = { 8,0,0 };
+	this->_position = { 0,0,0 };
 	this->_lookat = { -1,0, 0 };
 	this->_angleHor = 0.01f;
 	this->_angleVer = 0.00f;
@@ -17,12 +17,17 @@ Player::Player() {
 }
 
 Player::~Player() {
-
+	//if( this->heightMap)
+		//delete[] this->heightMap;
 }
 
 void Player::update(float dt, SDL_Window &window) {	
+	//int index = (((int)((_position.x + 20)*2.5))) * 100 + (int)((_position.z + 20)*2.5);
+	int index = ((int)_position.z + 20) * 200 + (int)_position.x+20;
+	_position.y = heightMap[index*5]/25.0f;
 	if (GetAsyncKeyState('W')) {
 		_position = _position + glm::vec3(_lookat.x, 0, _lookat.z)*dt;
+		//std::cout << _position.x << ", " << _position.z<< " ::: " << index << std::endl;
 	}
 	if (GetAsyncKeyState('S')) {
 		_position = _position - glm::vec3(_lookat.x, 0, _lookat.z)*dt;
@@ -34,7 +39,7 @@ void Player::update(float dt, SDL_Window &window) {
 	if (GetAsyncKeyState('D')) {
 		glm::vec3 rightVec = glm::cross(glm::vec3(0, 1, 0), _lookat);
 		_position = _position - rightVec*dt;
-		std::cout << _lookat.z << "  " << _lookat.x << "  "<< _lookat.y <<  "\t" << _position.x << "  " << _position.y << "  " << _position.z << "\n";
+		///std::cout << _lookat.z << "  " << _lookat.x << "  "<< _lookat.y <<  "\t" << _position.x << "  " << _position.y << "  " << _position.z << "\n";
 	}
 	SDL_Event evnt;
 	while (SDL_PollEvent(&evnt)) {		
@@ -79,4 +84,8 @@ void Player::matrixUpdate2(const GLuint &shaderProgram) {
 	glm::vec3 viewDir = glm::normalize(_lookat - _position);
 	glUniformMatrix4fv(perspMatrix, 1, GL_FALSE, &invPM[0][0]);
 	glUniform3fv(camMatrix, 1, &_position[0]);
+}
+
+void Player::setHM(unsigned char* hm) {
+	this->heightMap = hm;
 }

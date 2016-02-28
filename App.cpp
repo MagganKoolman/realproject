@@ -10,7 +10,7 @@ App::App()
 	this->window = nullptr;
 	this->screen_height = 720;
 	this->screen_width = 1080;
-	this->_player = Player();
+	//this->_player();
 	init();
 }
 
@@ -84,8 +84,10 @@ void App::init()
 		models.push_back(temp[i]);
 
 	}
-	Model* hm = importer->getGround("height_map2.bmp");
+	unsigned char* Pheightmap = nullptr;
+	Model* hm = importer->getGround("height_map2.bmp", Pheightmap);
 	models.push_back(hm);
+	_player.setHM(Pheightmap);
 	delete importer;
 	createScreenQuad();
 }
@@ -130,7 +132,7 @@ void App::createScreenQuad() {
 }
 
 void App::update(){
-	float x = 0.01f;
+	float x = 0.07f;
 	_player.update(x, *window);
 	render();
 }

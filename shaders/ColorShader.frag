@@ -31,7 +31,7 @@ void main(){
 	shadowPos /= shadowPos.w;
 	float shadowDepth = texture(shadowMap, vec2( shadowPos.x * 0.5 + 0.5, shadowPos.y * 0.5 + 0.5)).r;
 	float shadow = 0.0;
-	if (shadowPos.z - 0.0001 < shadowDepth * 2 - 1)
+	if (shadowPos.z - 0.001 < shadowDepth * 2 - 1)
 		shadow = 1.0;
     
 	vec3 lightDir = lightPos - pos.xyz;   
