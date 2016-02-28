@@ -49,7 +49,7 @@ void App::init()
 	delete importer;
 
 	//skapa 2dra bollen
-
+/*
 	Model* boll2 = new Model();
 	Material* tempMat = models[0]->getMat();
 	boll2->setMaterial(tempMat);
@@ -73,7 +73,7 @@ void App::init()
 	boll4->setSize(models[0]->getSize());
 	boll4->addTranslation(vec3(3, 0.5, 3));
 	models.push_back(boll4);
-
+	*/
 	importer = new OBJimporter();
 	std::vector<Model*> temp;
 
@@ -98,21 +98,21 @@ void App::initShader() {
 	testProgram.addAttribute("texCoorIn");
 	testProgram.linkShaders();*/
 	
-	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag");
+	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag", " ");
 	_colorProgram.addAttribute("position");
 	_colorProgram.addAttribute("texturePos");
 	_colorProgram.linkShaders();
 
 	lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
 
-	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag");
+	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag", "shaders/DeferredGeometry.geo");
 	_deferredProgram.addAttribute("vertexPos");
 	_deferredProgram.addAttribute("normal");
 	_deferredProgram.addAttribute("texCoorIn");
 	_deferredProgram.initFrameBuffer();
 	_deferredProgram.linkShaders();
 
-	_wireFrameProgram.compileShaders("shaders/WireframeShader.vert", "shaders/WireframeShader.frag");
+	_wireFrameProgram.compileShaders("shaders/WireframeShader.vert", "shaders/WireframeShader.frag", " ");
 	_wireFrameProgram.addAttribute("vertexPos");
 	_wireFrameProgram.linkShaders();
 }
@@ -132,7 +132,7 @@ void App::createScreenQuad() {
 }
 
 void App::update(){
-	float x = 0.07f;
+	float x = 0.1f;
 	_player.update(x, *window);
 	render();
 }

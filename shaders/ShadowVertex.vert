@@ -1,4 +1,4 @@
-#version 330
+#version 400 core
 
 uniform mat4 VPmatrix;
 uniform mat4 World;

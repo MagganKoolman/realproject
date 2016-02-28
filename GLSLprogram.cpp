@@ -3,7 +3,7 @@
 #include <vector>
 
 GLSLprogram::GLSLprogram(): _programID(0), _vertexShader(0), _fragmentShader(0), _numAttributes(0), frameBuffer(0), _texture(0), _specularTexture(0),
-_normalTexture(0), _depthTexture(0), _diffuseTexture(0){
+_normalTexture(0), _depthTexture(0), _diffuseTexture(0), _geometryShader(0){
 
 }
 
@@ -11,7 +11,7 @@ GLSLprogram::~GLSLprogram() {
 
 }
 
-void GLSLprogram::compileShaders(const std::string& vertexPath, const std::string& fragmentPath) {
+void GLSLprogram::compileShaders(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath) {
 	_programID = glCreateProgram();
 	_vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	if (_vertexShader == 0) {
@@ -22,11 +22,53 @@ void GLSLprogram::compileShaders(const std::string& vertexPath, const std::strin
 		std::cout << "Fragment shader fucka!";
 	}
 	compileShader(vertexPath, _vertexShader);
+	if (geometryPath != " ")
+	{
+		_geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+		if (_geometryShader == 0) {
+			std::cout << "Geometry shader fucka!";
+		}
+		compileShader(geometryPath, _geometryShader);
+	}
 	compileShader(fragmentPath, _fragmentShader);
+}
+
+void GLSLprogram::compileShader(const std::string& filePath, GLuint shaderID) {
+	std::ifstream shaderFile(filePath);
+	if (shaderFile.fail()) {
+		std::cout << "Fil fucka: " + filePath;
+	}
+	std::string fileContent = "";
+	std::string line;
+
+	while (std::getline(shaderFile, line)) {
+		fileContent += line + "\n";
+	}
+	shaderFile.close();
+
+	const char* contentsPtr = fileContent.c_str();
+	glShaderSource(shaderID, 1, &contentsPtr, nullptr);
+	glCompileShader(shaderID);
+
+	GLint success = 0;
+	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+
+	if (success == GL_FALSE) {
+		GLint maxLength = 0;
+		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
+
+		std::vector<char> errorLog(maxLength);
+		glGetShaderInfoLog(shaderID, maxLength, &maxLength, &errorLog[0]);
+
+		glDeleteShader(shaderID);
+		std::printf("%s\n", &(errorLog[0]));
+	}
 }
 
 void GLSLprogram::linkShaders() {	
 	glAttachShader(_programID, _vertexShader);
+	if(_geometryShader != 0)
+		glAttachShader(_programID, _geometryShader);
 	glAttachShader(_programID, _fragmentShader);
 	glLinkProgram(_programID);
 	GLint success = 0;
@@ -40,13 +82,16 @@ void GLSLprogram::linkShaders() {
 
 		glDeleteProgram(_programID);
 		glDeleteShader(_vertexShader);
+		glDeleteShader(_geometryShader);
 		glDeleteShader(_fragmentShader);
 		
 		std::printf("%s\n", &(errorLog[0]));
 	}
 	glDetachShader(_programID, _vertexShader);
+	glDetachShader(_programID, _geometryShader);
 	glDetachShader(_programID, _fragmentShader);
 	glDeleteShader(_vertexShader);
+	glDeleteShader(_geometryShader);
 	glDeleteShader(_fragmentShader);
 }
 
@@ -55,7 +100,6 @@ void GLSLprogram::initFrameBuffer() {
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
 	glEnable(GL_TEXTURE_2D); 
-	//glEnable(GL_DEPTH_TEST);
 
 	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);
@@ -130,38 +174,6 @@ void GLSLprogram::unUse() {
 		glDisableVertexAttribArray(i);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void GLSLprogram::compileShader(const std::string& filePath, GLuint shaderID) {
-	std::ifstream shaderFile(filePath);
-	if (shaderFile.fail()) {
-		std::cout << "Fil fucka: " + filePath;
-	}
-	std::string fileContent = "";
-	std::string line;
-
-	while (std::getline(shaderFile, line)) {
-		fileContent += line + "\n";
-	}
-	shaderFile.close();
-
-	const char* contentsPtr = fileContent.c_str();
-	glShaderSource(shaderID, 1, &contentsPtr, nullptr);
-	glCompileShader(shaderID);
-
-	GLint success = 0;
-	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
-
-	if (success == GL_FALSE) {
-		GLint maxLength = 0;
-		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
-
-		std::vector<char> errorLog(maxLength);
-		glGetShaderInfoLog(shaderID, maxLength, &maxLength, &errorLog[0]);
-
-		glDeleteShader(shaderID);
-		std::printf("%s\n", &(errorLog[0]));
-	}
 }
 
 void GLSLprogram::enableTextures(const GLSLprogram &secondShader) {

@@ -243,10 +243,10 @@ Model* OBJimporter::getGround(std::string heightMapFile, unsigned char* &hm) {
 	TriangleVertex* vertices = new TriangleVertex[(int)((width-1)*(height-1)*6)];
 	int index = 0;
 	for (int i = 0; i < height/2-1; i++) { 
-		for (int j = 0; j < width/2; j++) { //float x, y, z, nx, ny, nz, u, v;                  (float)((int)image[index++]) / 200 - 2
-			//hm[i*(width / 2) + j] = image[2 * i*width + 2 * j];
-			vertices[index++] = { ((float)2*j - width/2)/5.0f, (float)((int)image[2*i*width+2*j]) / 25-0.5f, ((float)2*i - height/2)/5.0f, 0,1,0, (float)2*j / width, (float)2*i / height };
-			vertices[index++] = { ((float)2*j +2 - width / 2) / 5.0f, (float)((int)image[2*i*width+2*(j+1)]) / 25 - 0.5f, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)(2*(j+1)) / width, (float)2*i / height };
+		for (int j = 0; j < width/2-1; j++) { //float x, y, z, nx, ny, nz, u, v;                  (float)((int)image[index++]) / 200 - 2
+			vertices[index++] = { ((float)2 * j + 2 - width / 2) / 5.0f, (float)((int)image[2 * i*width + 2 * (j + 1)]) / 25 - 0.5f, ((float)2 * i - height / 2) / 5.0f, 0,1,0, (float)(2 * (j + 1)) / width, (float)2 * i / height };
+			vertices[index++] = { ((float)2*j - width/2)/5.0f, (float)((int)image[2*i*width+2*j]) / 25-0.5f, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)2*j / width, (float)2*i / height };
+			
 			vertices[index++] = { ((float)2*j - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*j]) / 25 - 0.5f, ((float)2*i + 2 - height / 2) / 5.0f, 0,1,0, (float)2*j / width, (float)(2*(i+1))/ height };
 			vertices[index++] = { ((float)2*j+2 - width / 2) / 5.0f, (float)((int)image[2*i*width+2*(j+1)]) / 25 - 0.5f, ((float)2*i - height / 2) / 5.0f, 0,1,0, (float)(2*(j+1)) / width, (float)2*i / height };
 			vertices[index++] = { ((float)2*j - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*j]) / 25 - 0.5f, ((float)2*i+2 - height / 2) / 5.0f, 0,1,0, (float)2*j / width, (float)(2*(i+1)) / height };
@@ -263,8 +263,8 @@ Model* OBJimporter::getGround(std::string heightMapFile, unsigned char* &hm) {
 	result->setBUFFid(buffid);
 	result->setSize(index);
 	Material* mat  = new Material;
-	mat->Ka = vec3(0.00,0.00,0.00);
-	mat->Kd = vec3(0.4, 0.4, 0.4);
+	mat->Ka = vec3(0.03,0.08,0.05);
+	mat->Kd = vec3(0.2, 0.1, 0.3);
 	mat->Ks = vec3(0, 0, 0);
 	mat->materialName = "";
 	mat->texid = GText;

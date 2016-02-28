@@ -5,8 +5,8 @@
 
 LightSource::LightSource(): _shadowTex(0){
 	
-	light.position = glm::vec3(10, 5,  0);
-	light.direction = glm::vec3(-1, 0, 0);
+	light.position = glm::vec3(5, 8,  0);
+	light.direction = glm::vec3(0.01f, 0, 0.01f);
 
 	_perspectiveMat = glm::perspective(45.0f, 1080.f / 720.0f, 3.0f, 30.0f);
 	_viewMat = glm::lookAt(light.position, light.direction, glm::vec3(0, 1, 0));
@@ -23,7 +23,7 @@ LightSource::~LightSource() {
 }
 
 void LightSource::init(const std::string& vertexPath, const std::string& fragmentPath) {
-	shadowShader.compileShaders(vertexPath, fragmentPath);
+	shadowShader.compileShaders(vertexPath, fragmentPath, " ");
 	shadowShader.addAttribute("vertexPosition");
 	shadowShader.linkShaders();
 	initTex();
