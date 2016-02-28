@@ -17,8 +17,7 @@ Player::Player() {
 }
 
 Player::~Player() {
-	//if( this->heightMap)
-		//delete[] this->heightMap;
+	delete[] this->heightMap;
 }
 
 void Player::update(float dt, SDL_Window &window) {	
