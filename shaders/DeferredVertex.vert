@@ -1,7 +1,6 @@
 #version 400
 
 in vec3 vertexPos;
-in vec3 normal;
 in vec2 texCoorIn;
 
 out vec4 position;
