@@ -265,7 +265,7 @@ Model* OBJimporter::getGround(std::string heightMapFile, unsigned char* &hm) {
 	Material* mat  = new Material;
 	mat->Ka = vec3(0.03,0.08,0.05);
 	mat->Kd = vec3(0.2, 0.1, 0.3);
-	mat->Ks = vec3(0, 0, 0);
+	mat->Ks = vec3(0,0,0);
 	mat->materialName = "";
 	mat->texid = GText;
 	result->setMaterial(mat);

@@ -19,6 +19,8 @@ public:
 	void enableTextures(const GLSLprogram &secondShader);
 	void disableTextures();
 
+	void enableNormalMap();
+
 	GLuint getTexture() const;
 	GLuint getTexture2() const;
 	GLuint getTexture3() const;
@@ -27,6 +29,8 @@ public:
 	GLuint getProgramID() const;
 
 	GLuint frameBuffer;
+
+	void initNormalMap(std::string filename);
 private:
 	GLuint _programID;
 	GLuint _vertexShader;
@@ -38,6 +42,8 @@ private:
 	GLuint _depthTexture;
 	GLuint _specularTexture;
 	GLuint _diffuseTexture;
+
+	GLuint _normalMap;
 
 	int _numAttributes;
 	void compileShader(const std::string& filePath, GLuint shaderID);

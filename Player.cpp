@@ -23,7 +23,7 @@ Player::~Player() {
 void Player::update(float dt, SDL_Window &window) {	
 	//int index = (((int)((_position.x + 20)*2.5))) * 100 + (int)((_position.z + 20)*2.5);
 	int index = ((int)_position.z + 20) * 200 + (int)_position.x+20;
-	_position.y = heightMap[index*5]/25.0f;
+	_position.y = heightMap[index*5]/25.0f +0.5f;
 	if (GetAsyncKeyState('W')) {
 		_position = _position + glm::vec3(_lookat.x, 0, _lookat.z)*dt;
 		//std::cout << _position.x << ", " << _position.z<< " ::: " << index << std::endl;

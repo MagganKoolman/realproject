@@ -90,6 +90,7 @@ void App::init()
 	_player.setHM(Pheightmap);
 	delete importer;
 	createScreenQuad();
+
 }
 
 void App::initShader() {
@@ -111,6 +112,8 @@ void App::initShader() {
 	_deferredProgram.addAttribute("texCoorIn");
 	_deferredProgram.initFrameBuffer();
 	_deferredProgram.linkShaders();
+
+	_deferredProgram.initNormalMap("normalMap.png");
 
 	_wireFrameProgram.compileShaders("shaders/WireframeShader.vert", "shaders/WireframeShader.frag", " ");
 	_wireFrameProgram.addAttribute("vertexPos");
@@ -150,6 +153,7 @@ void App::render() {
 	if (!GetAsyncKeyState('Q'))
 	{
 		_deferredProgram.use();
+		_deferredProgram.enableNormalMap();
 		_player.matrixUpdate(_deferredProgram.getProgramID());
 		for (int i = 0; i < models.size(); i++) {
 			models[i]->draw(_deferredProgram.getProgramID());
@@ -158,7 +162,7 @@ void App::render() {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(2.0f, 4.0f);
 		_deferredProgram.unUse();
-		_colorProgram.use();		
+		_colorProgram.use();
 		_colorProgram.enableTextures(_deferredProgram);
 		_player.matrixUpdate2(_colorProgram.getProgramID());
 		lights.activateShadowMap(_colorProgram.getProgramID());
