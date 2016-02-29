@@ -107,7 +107,6 @@ void App::initShader() {
 
 	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag", "shaders/DeferredGeometry.geo");
 	_deferredProgram.addAttribute("vertexPos");
-	_deferredProgram.addAttribute("normal");
 	_deferredProgram.addAttribute("texCoorIn");
 	_deferredProgram.initFrameBuffer();
 	_deferredProgram.linkShaders();
