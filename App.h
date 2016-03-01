@@ -44,5 +44,5 @@ public:
 	App();
 	~App();
 	
-	void update();
+	void update(float deltaTime);
 };

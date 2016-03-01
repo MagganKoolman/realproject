@@ -20,7 +20,8 @@ Player::~Player() {
 	delete[] this->heightMap;
 }
 
-void Player::update(float dt, SDL_Window &window) {	
+void Player::update(float dt, SDL_Window &window) {
+	dt = dt * 0.01;
 	//int index = (((int)((_position.x + 20)*2.5))) * 100 + (int)((_position.z + 20)*2.5);
 	int index = ((int)_position.z + 20) * 200 + (int)_position.x+20;
 	_position.y = heightMap[index*5]/25.0f +0.5f;

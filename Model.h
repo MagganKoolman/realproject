@@ -3,6 +3,7 @@
 #include <gl\glew.h>
 #include "Datastructs.h"
 #include "glm\gtc\matrix_transform.hpp"
+#include <SOIL\SOIL.h>
 
 class Model {
 private:
@@ -10,11 +11,14 @@ private:
 	GLuint _VBOid;
 	GLuint _BUFFid;
 	Material* _mat;
+	GLuint _normalTexture;
 	glm::mat4x4 worldMat;
 	int size;
 public:
 	Model();
 	~Model();
+
+	void initNormalTexture(const std::string &filePath);
 	void setMaterial(Material* material);
 	void setVBOid(GLuint vbo);
 	void setBUFFid(GLuint bid);

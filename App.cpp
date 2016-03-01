@@ -10,7 +10,6 @@ App::App()
 	this->window = nullptr;
 	this->screen_height = 720;
 	this->screen_width = 1080;
-	//this->_player();
 	init();
 }
 
@@ -46,6 +45,7 @@ void App::init()
 	importer->loadObj("models/sphere1.obj");
 	models = importer->CreateTriangleData();
 	models[0]->addTranslation(vec3(0,0.5,0));
+	models[0]->initNormalTexture("normalMap.png");
 	delete importer;
 
 	//skapa 2dra bollen
@@ -108,11 +108,10 @@ void App::initShader() {
 
 	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag", "shaders/DeferredGeometry.geo");
 	_deferredProgram.addAttribute("vertexPos");
+	_deferredProgram.addAttribute("normal");
 	_deferredProgram.addAttribute("texCoorIn");
 	_deferredProgram.initFrameBuffer();
 	_deferredProgram.linkShaders();
-
-	_deferredProgram.initNormalMap("normalMap.png");
 
 	_wireFrameProgram.compileShaders("shaders/WireframeShader.vert", "shaders/WireframeShader.frag", " ");
 	_wireFrameProgram.addAttribute("vertexPos");
@@ -133,9 +132,8 @@ void App::createScreenQuad() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void App::update(){
-	float x = 0.1f;
-	_player.update(x, *window);
+void App::update(float deltaTime){
+	_player.update(deltaTime, *window);
 	render();
 }
 
@@ -146,13 +144,11 @@ void App::render() {
 	for (int i = 0; i < models.size(); i++) {
 		models[i]->draw(lights.shadowShader.getProgramID());
 	}
-	
 	lights.shadowShader.unUse();
 	
 	if (!GetAsyncKeyState('Q'))
 	{
 		_deferredProgram.use();
-		_deferredProgram.enableNormalMap();
 		_player.matrixUpdate(_deferredProgram.getProgramID());
 		for (int i = 0; i < models.size(); i++) {
 			models[i]->draw(_deferredProgram.getProgramID());
@@ -165,6 +161,7 @@ void App::render() {
 		_colorProgram.enableTextures(_deferredProgram);
 		_player.matrixUpdate2(_colorProgram.getProgramID());
 		lights.activateShadowMap(_colorProgram.getProgramID());
+
 		glBindBuffer(GL_ARRAY_BUFFER, screen);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));	
