@@ -4,6 +4,7 @@ layout(triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
 
 in vec4 position[];
+in vec3 normalOut[];
 in vec2 texOut[];
 
 out vec3 normalOut2;
@@ -25,6 +26,7 @@ void main()
 		{
 			gl_Position = Perspective * Camera * position[i];
 			texOut2 = texOut[i];
+			normalOut2 = normalOut[i];
 			EmitVertex();
 		}
 		EndPrimitive();
