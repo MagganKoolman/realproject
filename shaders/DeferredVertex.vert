@@ -11,6 +11,5 @@ uniform mat4 World;
 
 void main(){
 	position = World * vec4(vertexPos, 1.0);
-	normalOut = normal;
 	texOut = texCoorIn;
 }
