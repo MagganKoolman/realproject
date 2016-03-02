@@ -32,11 +32,7 @@ void main()
 			tangent = (Perspective * Camera * position[i]).xyz;
 			gl_Position = Perspective * Camera * position[i];
 			texOut2 = texOut[i];
-<<<<<<< HEAD
-			normalOut2 = 
-=======
 			normalOut2 = normalOut[i];
->>>>>>> cd4fe96880656f5d607eb2a34350d26e466774f8
 			EmitVertex();
 		}
 		EndPrimitive();
