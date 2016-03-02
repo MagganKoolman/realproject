@@ -3,7 +3,6 @@
 #include <fstream>
 #include <sstream>
 #include <stdio.h>
-#include <SOIL\SOIL.h>
 #include <iostream>
 
 using namespace std;
@@ -204,9 +203,9 @@ std::vector<Model*> OBJimporter::CreateTriangleData()
 			for (int j = 0; j < 3; j++) {
 				vIndex = objects[o]->faces[i].v[j] - 1;
 				tIndex = objects[o]->faces[i].t[j] - 1;
-				//nIndex = objects[o]->faces[i].n[j] - 1;
+				nIndex = objects[o]->faces[i].n[j] - 1;
 				triangleVertices[(3 * i) + j] = { vertices[vIndex].x, vertices[vIndex].y, vertices[vIndex].z, 
-					//normalVertices[nIndex].x, normalVertices[nIndex].y, normalVertices[nIndex].z,
+					normalVertices[nIndex].x, normalVertices[nIndex].y, normalVertices[nIndex].z,
 					textureCoords[tIndex].u, textureCoords[tIndex].v };
 			}
 		}
@@ -244,12 +243,12 @@ Model* OBJimporter::getGround(std::string heightMapFile, unsigned char* &hm) {
 	int index = 0;
 	for (int i = 0; i < height/2-1; i++) { 
 		for (int j = 0; j < width/2-1; j++) { //float x, y, z, nx, ny, nz, u, v;                  (float)((int)image[index++]) / 200 - 2
-			vertices[index++] = { ((float)2 * j + 2 - width / 2) / 5.0f, (float)((int)image[2 * i*width + 2 * (j + 1)]) / 25 - 0.5f, ((float)2 * i - height / 2) / 5.0f, (float)(2 * (j + 1)) / width, (float)2 * i / height };
-			vertices[index++] = { ((float)2*j - width/2)/5.0f, (float)((int)image[2*i*width+2*j]) / 25-0.5f, ((float)2*i - height / 2) / 5.0f, (float)2*j / width, (float)2*i / height };		
-			vertices[index++] = { ((float)2*j - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*j]) / 25 - 0.5f, ((float)2*i + 2 - height / 2) / 5.0f, (float)2*j / width, (float)(2*(i+1))/ height };
-			vertices[index++] = { ((float)2*j+2 - width / 2) / 5.0f, (float)((int)image[2*i*width+2*(j+1)]) / 25 - 0.5f, ((float)2*i - height / 2) / 5.0f, (float)(2*(j+1)) / width, (float)2*i / height };
-			vertices[index++] = { ((float)2*j - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*j]) / 25 - 0.5f, ((float)2*i+2 - height / 2) / 5.0f, (float)2*j / width, (float)(2*(i+1)) / height };
-			vertices[index++] = { ((float)2*j+2 - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*(j+1)]) / 25 - 0.5f, ((float)2*i+2 - height / 2) / 5.0f, (float)(2*(j+1)) / width, (float)(2*(i+1)) / height };
+			vertices[index++] = { ((float)2 * j + 2 - width / 2) / 5.0f, (float)((int)image[2 * i*width + 2 * (j + 1)]) / 25 - 0.5f, ((float)2 * i - height / 2) / 5.0f, 0, 1, 0, (float)(2 * (j + 1)) / width, (float)2 * i / height };
+			vertices[index++] = { ((float)2*j - width/2)/5.0f, (float)((int)image[2*i*width+2*j]) / 25-0.5f, ((float)2*i - height / 2) / 5.0f, 0, 1, 0, (float)2*j / width, (float)2*i / height };
+			vertices[index++] = { ((float)2*j - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*j]) / 25 - 0.5f, ((float)2*i + 2 - height / 2) / 5.0f, 0, 1, 0, (float)2*j / width, (float)(2*(i+1))/ height };
+			vertices[index++] = { ((float)2*j+2 - width / 2) / 5.0f, (float)((int)image[2*i*width+2*(j+1)]) / 25 - 0.5f, ((float)2*i - height / 2) / 5.0f, 0, 1, 0, (float)(2*(j+1)) / width, (float)2*i / height };
+			vertices[index++] = { ((float)2*j - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*j]) / 25 - 0.5f, ((float)2*i+2 - height / 2) / 5.0f, 0, 1, 0, (float)2*j / width, (float)(2*(i+1)) / height };
+			vertices[index++] = { ((float)2*j+2 - width / 2) / 5.0f, (float)((int)image[(2*(i+1))*width+2*(j+1)]) / 25 - 0.5f, ((float)2*i+2 - height / 2) / 5.0f, 0, 1, 0, (float)(2*(j+1)) / width, (float)(2*(i+1)) / height };
 		}
 	}
 
