@@ -14,6 +14,7 @@ private:
 	GLuint _normalTexture;
 	glm::mat4x4 worldMat;
 	int size;
+	bool normalMaping;
 public:
 	Model();
 	~Model();

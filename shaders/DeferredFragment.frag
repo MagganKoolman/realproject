@@ -16,6 +16,7 @@ uniform sampler2D normalMap;
 uniform vec3 ambient;
 uniform vec3 diffuse;
 uniform vec3 specular;
+uniform bool normalMapBool;
 
 mat3 cotangent_frame(vec3 N, vec3 p, vec2 uv)
 {
@@ -49,17 +50,11 @@ vec3 perturb_normal( vec3 N, vec3 vv, vec2 texcoord )
 void main(){
 	color = texture(texSampler, vec2(texOut2.s, 1- texOut2.t)) + vec4(ambient, 0.0);
 	vec3 nmap = texture(normalMap, vec2(texOut2.s, 1-texOut2.t)).xyz;
-	vec3 forward = vec3(0,0,1);
-	float l = length(cross(forward,normalOut2));
-	float d = dot(forward, normalOut2);
-	mat3x3 basis = mat3x3(tangent,
-							cross(normalOut2, tangent), 
-							normalOut2);
-
-	
-	vec3 ve = normalize(V - tangent); 
-	vec3 normal =  perturb_normal(normalOut2, ve, texOut2);
-
+	vec3 ve = normalize(V - tangent);
+	vec3 normal = normalOut2;
+	if(normalMapBool){
+		normal =  perturb_normal(normalOut2, ve, texOut2);
+	}
 	normalTex = vec4(normal*0.5+0.5,1.0);
 	specularTex = vec4(specular,1.0).rgb;
 	diffuseTex = vec4(diffuse,1.0).rgb;

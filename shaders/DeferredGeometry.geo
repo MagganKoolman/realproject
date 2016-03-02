@@ -29,7 +29,7 @@ void main()
 		float tv = texOut[2].t - texOut[0].t;
 		for (int i = 0; i < 3; i++)
 		{
-			tangent = (Perspective * Camera * position[i]).xyz;
+			tangent = ( position[i]).xyz;
 			gl_Position = Perspective * Camera * position[i];
 			texOut2 = texOut[i];
 			normalOut2 = normalOut[i];

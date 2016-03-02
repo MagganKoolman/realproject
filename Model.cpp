@@ -1,7 +1,7 @@
 #include "Model.h"
 
 Model::Model(): _VBOid(0), _mat(nullptr), _normalTexture(0) {
-	
+	normalMaping = false;
 }
 
 Model::~Model() {
@@ -12,6 +12,7 @@ Model::~Model() {
 }
 
 void Model::initNormalTexture(const std::string &filePath) {
+	this->normalMaping = true;
 	glEnable(GL_TEXTURE_2D);
 
 	unsigned char* image;
@@ -60,6 +61,8 @@ void Model::addTranslation(glm::vec3 translation) {
 	this->worldMat = glm::translate(worldMat, translation);
 }
 void Model::draw(GLuint spID) {
+	GLuint nMapBool = glGetUniformLocation(spID, "normalMapBool");
+	glUniform1i(nMapBool, normalMaping);
 
 	GLuint texLocation = glGetUniformLocation(spID, "texSampler");
 	glUniform1i(texLocation, 0);

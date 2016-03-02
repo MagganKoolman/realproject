@@ -45,7 +45,7 @@ void App::init()
 	importer->loadObj("models/sphere1.obj");
 	models = importer->CreateTriangleData();
 	models[0]->addTranslation(vec3(0,0.5,0));
-	models[0]->initNormalTexture("normalMap.png");
+	models[0]->initNormalTexture("normalMap3.png");
 	delete importer;
 
 	//skapa 2dra bollen
