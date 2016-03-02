@@ -8,6 +8,8 @@ in vec2 texOut[];
 
 out vec3 normalOut2;
 out vec2 texOut2;
+out vec3 tangent;
+out vec3 V;
 
 uniform mat4 Perspective;
 uniform mat4 Camera;
@@ -21,10 +23,15 @@ void main()
 	vec3 aVector = normalize(cameraPosition - position[1].xyz);
 	if(dot(normalOut2, aVector) > 0.0f)
 	{
+		V = cameraPosition;
+		float tu = texOut[1].t - texOut[0].t;
+		float tv = texOut[2].t - texOut[0].t;
 		for (int i = 0; i < 3; i++)
 		{
+			tangent = (Perspective * Camera * position[i]).xyz;
 			gl_Position = Perspective * Camera * position[i];
 			texOut2 = texOut[i];
+			normalOut2 = 
 			EmitVertex();
 		}
 		EndPrimitive();
