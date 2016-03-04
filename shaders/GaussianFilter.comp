@@ -1,0 +1,11 @@
+#version 400 core
+
+layout (local_size_x = 1024) in;
+
+//layout (rgba32f, binding = 0) uniform image2D input_image;
+//layout (rgba32f, binding = 1) uniform image2D output_image;
+
+void main(){
+	
+}
+

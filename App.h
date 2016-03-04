@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "OBJimporter.h"
 #include "LightSource.h"
+#include "Compute.h"
 
 #include <iostream>
 #include <SDL\SDL.h>
@@ -26,6 +27,7 @@ private:
 	void initShader();
 	void render();
 	void createScreenQuad();
+	void drawOnScreenQuad();
 
 	std::vector<Model*> models;
 	OBJimporter* importer;
@@ -33,6 +35,7 @@ private:
 	GLuint screen;
 
 	LightSource lights;
+	Compute gaussianFilter;
 
 	GLSLprogram _colorProgram;
 	GLSLprogram _deferredProgram;
