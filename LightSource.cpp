@@ -6,8 +6,8 @@
 
 LightSource::LightSource(): _shadowTex(0){
 	
-	light.position = glm::vec3(5, 8, 0);
-	light.direction = glm::vec3(0.01f, 0, 0.01f);
+	light.position = glm::vec3(8, 8, 0);
+	light.direction = glm::vec3(-8.0f, 0.0, 0.0f);
 
 	_perspectiveMat = glm::perspective(45.0f, 1080.f / 720.0f, 3.0f, 20.0f);
 	_viewMat = glm::lookAt(light.position, light.direction, glm::vec3(0, 1, 0));
@@ -77,7 +77,7 @@ void LightSource::deActivateShadowMap(const GLuint &shaderProgram) {
 }
 
 void LightSource::updatePosition(float dt) {
-	light.position = glm::rotateY(light.position, (3.1415f / 4)*dt);
+	light.position = glm::rotateY(light.position, (25.0f * dt));
 	_viewMat = glm::lookAt(light.position, light.direction, glm::vec3(0, 1, 0));
 
 	bias_matrix = glm::mat4(glm::vec4(0.5f, 0.0f, 0.0f, 0.0f),

@@ -45,7 +45,7 @@ void App::init()
 	importer->loadObj("models/sphere1.obj");
 	models = importer->CreateTriangleData();
 	models[0]->addTranslation(vec3(0,0.5,0));
-	models[0]->initNormalTexture("normalMap3.png");
+	models[0]->initNormalTexture("normalMap.png");
 	delete importer;
 
 	//skapa 2dra bollen
@@ -104,8 +104,6 @@ void App::initShader() {
 	_colorProgram.addAttribute("texturePos");
 	_colorProgram.linkShaders();
 
-	lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
-
 	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag", "shaders/DeferredGeometry.geo");
 	_deferredProgram.addAttribute("vertexPos");
 	_deferredProgram.addAttribute("normal");
@@ -116,6 +114,10 @@ void App::initShader() {
 	_wireFrameProgram.compileShaders("shaders/WireframeShader.vert", "shaders/WireframeShader.frag", " ");
 	_wireFrameProgram.addAttribute("vertexPos");
 	_wireFrameProgram.linkShaders();
+
+	lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
+
+	gaussianFilter.initComputeShader("shaders/GaussianFilter.comp");
 }
 
 void App::createScreenQuad() {
@@ -162,13 +164,9 @@ void App::render() {
 		_colorProgram.enableTextures(_deferredProgram);
 		_player.matrixUpdate2(_colorProgram.getProgramID());
 		lights.activateShadowMap(_colorProgram.getProgramID());
-
-		glBindBuffer(GL_ARRAY_BUFFER, screen);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));	
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
+		drawOnScreenQuad();
+		
 		glDisable(GL_POLYGON_OFFSET_FILL);
 		_colorProgram.disableTextures();
 		lights.deActivateShadowMap(_colorProgram.getProgramID());
@@ -189,4 +187,13 @@ void App::render() {
 	
 	SDL_GL_SwapWindow(window);
 }
+
+void App::drawOnScreenQuad() {
+	glBindBuffer(GL_ARRAY_BUFFER, screen);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, x));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 
