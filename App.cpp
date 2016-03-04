@@ -134,6 +134,7 @@ void App::createScreenQuad() {
 
 void App::update(float deltaTime){
 	_player.update(deltaTime, *window);
+	this->lights.updatePosition(deltaTime);
 	render();
 }
 

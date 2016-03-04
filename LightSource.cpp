@@ -1,7 +1,8 @@
 #include "LightSource.h"
 #include <iostream>
 #include "glm\gtx\transform.hpp"
-#include "glm\gtc\matrix_transform.hpp"
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtx\rotate_vector.hpp>
 
 LightSource::LightSource(): _shadowTex(0){
 	
@@ -75,5 +76,14 @@ void LightSource::deActivateShadowMap(const GLuint &shaderProgram) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void LightSource::updatePosition(float dt) {
+	light.position = glm::rotateY(light.position, (3.1415f / 4)*dt);
+	_viewMat = glm::lookAt(light.position, light.direction, glm::vec3(0, 1, 0));
 
+	bias_matrix = glm::mat4(glm::vec4(0.5f, 0.0f, 0.0f, 0.0f),
+		glm::vec4(0.0f, 0.5f, 0.0f, 0.0f),
+		glm::vec4(0.0f, 0.0f, 0.5f, 0.0f),
+		glm::vec4(0.5f, 0.5f, 0.5f, 1.0f)
+		) * _perspectiveMat * _viewMat;
+}
 

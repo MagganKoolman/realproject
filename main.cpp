@@ -17,9 +17,9 @@ int main(int argc, char** argv) {
 	{
 		timeStamp2 = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
 		dt = timeStamp2.count() - timeStamp.count();
-		running = !GetAsyncKeyState(VK_ESCAPE);
-		app.update(dt);
 		timeStamp = timeStamp2;
+		running = !GetAsyncKeyState(VK_ESCAPE);
+		app.update(dt/1000.f);
 	}
 
 	return 0;

@@ -11,6 +11,8 @@ public:
 	void activateShadowMap(const GLuint &shaderProgram);
 	void deActivateShadowMap(const GLuint &shaderProgram);
 	
+	void updatePosition(float dt);
+
 	GLSLprogram shadowShader;
 	GLuint _shadowTex;
 	
