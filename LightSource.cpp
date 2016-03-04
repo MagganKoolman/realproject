@@ -77,7 +77,7 @@ void LightSource::deActivateShadowMap(const GLuint &shaderProgram) {
 }
 
 void LightSource::updatePosition(float dt) {
-	light.position = glm::rotateY(light.position, (3.1415f / 4)*dt);
+	light.position = glm::rotateY(light.position, (180/8)*dt);
 	_viewMat = glm::lookAt(light.position, light.direction, glm::vec3(0, 1, 0));
 
 	bias_matrix = glm::mat4(glm::vec4(0.5f, 0.0f, 0.0f, 0.0f),

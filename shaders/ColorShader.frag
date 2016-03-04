@@ -31,7 +31,7 @@ void main(){
 	shadowPos /= shadowPos.w;
 	float shadowDepth = texture(shadowMap, vec2( shadowPos.x * 0.5 + 0.5, shadowPos.y * 0.5 + 0.5)).r;
 	float shadow = 0.0;
-	if (shadowPos.z - 0.01 < shadowDepth * 2 - 1)
+	if (shadowPos.z - 0.001 < shadowDepth * 2 - 1)
 		shadow = 1.0;
     
 	vec3 lightDir = lightPos - pos.xyz;   
@@ -44,7 +44,8 @@ void main(){
 	vec3 specularColor = spec*pow(max(dot(eyeDir,vHalfVector),0.0), 20);
 	vec3 diffuseColor = max(dif*dot(lightDir, normal), 0.0);
 
-   color = c  + vec4(0.4*(diffuseColor + specularColor),1) * shadow;
+    color = c  + vec4(0.4*(diffuseColor + specularColor),1) * shadow;
 	//color = vec4(texture(normalTex, texCoor).rgb * 2 -1, 1.0);
 	//color = vec4(normal,1);
+	//color = vec4(vec3(shadow),1);
 }
