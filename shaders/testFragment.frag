@@ -1,11 +1,11 @@
-#version 330 core
+#version 400 core
 
-uniform sampler2D shadowTex;
+uniform sampler2D computeTex;
 
-in vec2 texOut;
+in vec2 texCoor;
 
 out vec4 color;
 
 void main(){
-	color = texture(shadowTex, texOut);
+	color = texture(computeTex, texCoor);
 }

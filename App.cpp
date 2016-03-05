@@ -39,7 +39,7 @@ void App::init()
 	glEnable(GL_DEPTH_TEST);
 
 	initShader();
-
+	initGaussTex();
 	importer = new OBJimporter();
 
 	importer->loadObj("models/sphere1.obj");
@@ -94,10 +94,10 @@ void App::init()
 }
 
 void App::initShader() {
-	/*testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag");
-	testProgram.addAttribute("vertexPos");
-	testProgram.addAttribute("texCoorIn");
-	testProgram.linkShaders();*/
+	testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag", " ");
+	testProgram.addAttribute("position");
+	testProgram.addAttribute("texturePos");
+	testProgram.linkShaders();
 	
 	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag", " ");
 	_colorProgram.addAttribute("position");
@@ -162,6 +162,7 @@ void App::render() {
 		_deferredProgram.unUse();
 		_colorProgram.use();
 		_colorProgram.enableTextures(_deferredProgram);
+		
 		_player.matrixUpdate2(_colorProgram.getProgramID());
 		lights.activateShadowMap(_colorProgram.getProgramID());
 	
@@ -173,7 +174,7 @@ void App::render() {
 		_colorProgram.unUse();
 	}
 	else{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		/*glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		_wireFrameProgram.use();
 		_player.matrixUpdate(_wireFrameProgram.getProgramID());
@@ -182,7 +183,19 @@ void App::render() {
 		}
 		_wireFrameProgram.unUse();
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);*/
+		gaussiate();
+		testProgram.use();
+		GLuint texLocation = glGetUniformLocation(testProgram.getProgramID(), "computeTex");
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, gaussianTexture);
+		glUniform1i(texLocation, 0);
+
+		drawOnScreenQuad();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		testProgram.unUse();
 	}
 	
 	SDL_GL_SwapWindow(window);
@@ -194,6 +207,23 @@ void App::drawOnScreenQuad() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void App::gaussiate() {
+	glUseProgram(gaussianFilter.getProgramID());
+	glBindImageTexture(0, gaussianTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glDispatchCompute(100, 100, 1);
+	glUseProgram(0);
+}
+
+
+void App::initGaussTex() {
+	glGenTextures(1, &gaussianTexture);
+	glBindTexture(GL_TEXTURE_2D, gaussianTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1080, 720, 0, GL_RGBA32F, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 

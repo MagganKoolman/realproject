@@ -65,3 +65,7 @@ void Compute::compileComputeShader(const std::string &filePath, GLuint shaderID)
 		std::printf("%s\n", &(errorLog[0]));
 	}
 }
+
+GLuint Compute::getProgramID() const {
+	return _programID;
+}
