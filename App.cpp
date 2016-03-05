@@ -220,7 +220,7 @@ void App::gaussiate() {
 void App::initGaussTex() {
 	glGenTextures(1, &gaussianTexture);
 	glBindTexture(GL_TEXTURE_2D, gaussianTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1080, 720, 0, GL_RGBA32F, GL_FLOAT, 0);
+	glTexStorage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1080, 720);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
