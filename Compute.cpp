@@ -18,6 +18,7 @@ void Compute::initComputeShader(const std::string &filePath) {
 		std::cout << "Compute shader fucka!";
 	}
 	compileComputeShader(filePath, _computeShader);
+	
 	glAttachShader(_programID, _computeShader);
 	glLinkProgram(_programID);
 	GLint success = 0;

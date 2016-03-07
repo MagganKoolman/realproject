@@ -15,5 +15,4 @@ private:
 
 	void compileComputeShader(const std::string &filePath, GLuint shaderID);
 	void linkShader();
-
 };

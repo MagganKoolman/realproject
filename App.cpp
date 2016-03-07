@@ -212,7 +212,8 @@ void App::drawOnScreenQuad() {
 void App::gaussiate() {
 	glUseProgram(gaussianFilter.getProgramID());
 	glBindImageTexture(0, gaussianTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-	glDispatchCompute(100, 100, 1);
+	glDispatchCompute(540, 360, 1);
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	glUseProgram(0);
 }
 
@@ -221,8 +222,6 @@ void App::initGaussTex() {
 	glGenTextures(1, &gaussianTexture);
 	glBindTexture(GL_TEXTURE_2D, gaussianTexture);
 	glTexStorage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1080, 720);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
