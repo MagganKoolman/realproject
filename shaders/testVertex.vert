@@ -1,4 +1,4 @@
-#version 400 core
+#version 430 core
 
 in vec2 position;
 in vec2 texturePos;

@@ -1,24 +1,29 @@
 #version 430 core
 
-layout (local_size_x = 2, local_size_y = 2) in;
+layout (local_size_x = 8, local_size_y = 8) in;
 
-layout (RGBA32F, binding = 0) uniform image2D output_image;
-//layout (rgba32f, binding = 1) uniform image2D output_image;
-//layout (RGBA32F) uniform image2D output_image;
+layout (rgba32f, binding = 0) uniform image2D input_data;
+layout (rgba32f, binding = 1) uniform image2D output_data;
 
-/*const float kernelNumbers [49] = float[49]
+const float kernelNumbers [49] = float[49]
 		(0.000588042, 0.00238117, 0.00551085, 0.00728946, 0.00551085, 0.00238117, 0.000588042,
 		0.00238117, 0.0096421, 0.0223152, 0.0295173, 0.0223152, 0.0096421, 0.00238117,
 		0.00551085, 0.0223152, 0.0516451, 0.0683133, 0.0516451, 0.0223152, 0.00551085,
 		0.00728946, 0.0295173, 0.0683133, 0.0903611, 0.0683133, 0.0295173, 0.00728946,
 		0.00551085, 0.0223152, 0.0516451, 0.0683133, 0.0516451, 0.0223152, 0.00551085,
 		0.00238117, 0.0096421, 0.0223152, 0.0295173, 0.0223152, 0.0096421, 0.00238117,
-		0.000588042, 0.00238117, 0.00551085, 0.00728946, 0.00551085, 0.00238117, 0.000588042);*/
+		0.000588042, 0.00238117, 0.00551085, 0.00728946, 0.00551085, 0.00238117, 0.000588042);
 
 void main(){
-	ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
-	pos.x *= gl_LocalInvocationID.x;
-	pos.y *= gl_LocalInvocationID.y;
-	imageStore(output_image, pos, vec4(1.0, 1.0, 1.0, 0.5));		
+	vec2 pos = vec2(gl_GlobalInvocationID.xy);
+	vec4 result = vec4(0);
+	for (int i = 0; i < 7; i++)
+	{
+		for (int j = 0; j < 7; j++)
+		{
+			result += imageLoad(input_data, ivec2(pos) + ivec2(3*i-9, 3*j-9)) * kernelNumbers[(7*i) + j];
+		}
+	}
+	imageStore(output_data, ivec2(pos), result);		
 }
 
