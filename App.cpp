@@ -216,7 +216,7 @@ void App::drawOnScreenQuad() {
 
 void App::gaussiate() {
 	glUseProgram(gaussianFilter.getProgramID());
-	glBindImageTexture(0, _deferredProgram.getTexture3(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+	glBindImageTexture(0, _deferredProgram.getTexture(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 	glBindImageTexture(1, gaussianTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	glDispatchCompute(135, 90, 1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
