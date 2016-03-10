@@ -80,19 +80,19 @@ void GLSLprogram::linkShaders() {
 
 		std::vector<char> errorLog(maxLength);
 		glGetShaderInfoLog(_programID, maxLength, &maxLength, &errorLog[0]);
-
 		glDeleteProgram(_programID);
 		glDeleteShader(_vertexShader);
 		glDeleteShader(_geometryShader);
-		glDeleteShader(_fragmentShader);
-		
+		glDeleteShader(_fragmentShader);		
 		std::printf("%s\n", &(errorLog[0]));
 	}
 	glDetachShader(_programID, _vertexShader);
-	glDetachShader(_programID, _geometryShader);
+	if (_geometryShader != 0) {
+		glDetachShader(_programID, _geometryShader);
+		glDeleteShader(_geometryShader);
+	}
 	glDetachShader(_programID, _fragmentShader);
-	glDeleteShader(_vertexShader);
-	glDeleteShader(_geometryShader);
+	glDeleteShader(_vertexShader);	
 	glDeleteShader(_fragmentShader);
 }
 
@@ -104,14 +104,14 @@ void GLSLprogram::initFrameBuffer() {
 
 	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1080, 720, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1080, 720, 0, GL_RGBA, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glGenTextures(1, &_normalTexture);
 	glBindTexture(GL_TEXTURE_2D, _normalTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1080, 720, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1080, 720, 0, GL_RGBA, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);

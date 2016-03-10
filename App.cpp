@@ -29,17 +29,17 @@ void App::init()
 	SDL_GLContext glContext = SDL_GL_CreateContext(window);
 	if (glContext == nullptr)
 		std::cout << "SDLFEL";
-
+	
 	GLenum error = glewInit();
 	if (error != GLEW_OK)
 		std::cout << "GlewFel!";
-
+	
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 	glEnable(GL_DEPTH_TEST);
 
 	initShader();
-
+	initGaussTex();
 	importer = new OBJimporter();
 
 	importer->loadObj("models/sphere1.obj");
@@ -94,16 +94,20 @@ void App::init()
 }
 
 void App::initShader() {
-	/*testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag");
-	testProgram.addAttribute("vertexPos");
-	testProgram.addAttribute("texCoorIn");
-	testProgram.linkShaders();*/
+	testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag", " ");
+
+	testProgram.addAttribute("position");
+	
+	testProgram.addAttribute("texturePos");
+
+	testProgram.linkShaders();
+
 	
 	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag", " ");
 	_colorProgram.addAttribute("position");
 	_colorProgram.addAttribute("texturePos");
 	_colorProgram.linkShaders();
-
+	
 	_deferredProgram.compileShaders("shaders/DeferredVertex.vert", "shaders/DeferredFragment.frag", "shaders/DeferredGeometry.geo");
 	_deferredProgram.addAttribute("vertexPos");
 	_deferredProgram.addAttribute("normal");
@@ -116,8 +120,9 @@ void App::initShader() {
 	_wireFrameProgram.linkShaders();
 
 	lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
-
+	GLenum err = glGetError();
 	gaussianFilter.initComputeShader("shaders/GaussianFilter.comp");
+	err = glGetError();
 }
 
 void App::createScreenQuad() {
@@ -156,12 +161,26 @@ void App::render() {
 		for (int i = 0; i < models.size(); i++) {
 			models[i]->draw(_deferredProgram.getProgramID());
 		}
-		
+
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(2.0f, 4.0f);
 		_deferredProgram.unUse();
-		_colorProgram.use();
-		_colorProgram.enableTextures(_deferredProgram);
+
+		if (GetAsyncKeyState('E'))
+		{
+			gaussiate();
+			_colorProgram.use();
+			_colorProgram.enableTextures(_deferredProgram);
+			GLuint texLocation = glGetUniformLocation(_colorProgram.getProgramID(), "colorTex");
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, gaussianTexture);
+			glUniform1i(texLocation, 0);
+		}
+		else
+		{
+			_colorProgram.use();
+			_colorProgram.enableTextures(_deferredProgram);
+		}
 		_player.matrixUpdate2(_colorProgram.getProgramID());
 		lights.activateShadowMap(_colorProgram.getProgramID());
 	
@@ -181,10 +200,9 @@ void App::render() {
 			models[i]->draw(_wireFrameProgram.getProgramID());
 		}
 		_wireFrameProgram.unUse();
-
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-	
+		drawOnScreenQuad();
+	}	
 	SDL_GL_SwapWindow(window);
 }
 
@@ -194,6 +212,25 @@ void App::drawOnScreenQuad() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ScreenVertex), (void*)offsetof(ScreenVertex, s));
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void App::gaussiate() {
+	glUseProgram(gaussianFilter.getProgramID());
+	glBindImageTexture(0, _deferredProgram.getTexture(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+	glBindImageTexture(1, gaussianTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glDispatchCompute(135, 90, 1);
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+ 	glUseProgram(0);
+}
+
+
+void App::initGaussTex() {
+	glGenTextures(1, &gaussianTexture);
+	glBindTexture(GL_TEXTURE_2D, gaussianTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1080, 720, 0, GL_RGBA, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 

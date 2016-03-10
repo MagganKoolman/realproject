@@ -1,11 +1,27 @@
-#version 400 core
+#version 430 core
 
-layout (local_size_x = 1024) in;
+layout (local_size_x = 8, local_size_y = 8) in;
 
-//layout (rgba32f, binding = 0) uniform image2D input_image;
-//layout (rgba32f, binding = 1) uniform image2D output_image;
+layout (rgba32f, binding = 0) uniform image2D input_data;
+layout (rgba32f, binding = 1) uniform image2D output_data;
+
+const float kernelNumbers [25] = float[25]
+		(0.0106501, 0.24648, 0.0326031, 0.024648, 0.0106501, 
+		0.024628, 0.0570441, 0.0754548, 0.0570441, 0.0024648, 
+		0.0326031, 0.0754548, 0.0998075, 0.0754548, 0.0326031, 
+		0.024628, 0.0570441, 0.0754548, 0.0570441, 0.0024648,
+		0.0106501, 0.24648, 0.0326031, 0.024648, 0.0106501);
 
 void main(){
-	
+	vec2 pos = vec2(gl_GlobalInvocationID.xy);
+	vec4 result = vec4(0);
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 5; j++)
+		{
+			result += imageLoad(input_data, ivec2(pos) + ivec2(i-2, j-2)) * kernelNumbers[(5*i) + j];
+		}
+	}
+	imageStore(output_data, ivec2(pos), result * 0.7);		
 }
 

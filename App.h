@@ -28,6 +28,7 @@ private:
 	void render();
 	void createScreenQuad();
 	void drawOnScreenQuad();
+	void gaussiate();
 
 	std::vector<Model*> models;
 	OBJimporter* importer;
@@ -35,7 +36,10 @@ private:
 	GLuint screen;
 
 	LightSource lights;
+
 	Compute gaussianFilter;
+	GLuint gaussianTexture;
+	void initGaussTex();
 
 	GLSLprogram _colorProgram;
 	GLSLprogram _deferredProgram;

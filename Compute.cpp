@@ -11,7 +11,7 @@ Compute::~Compute() {
 	
 }
 
-void Compute::initComputeShader(const std::string &filePath) {
+void Compute::initComputeShader(const std::string &filePath) {	
 	_programID = glCreateProgram();
 	_computeShader = glCreateShader(GL_COMPUTE_SHADER);
 	if (_computeShader == 0) {
@@ -26,9 +26,10 @@ void Compute::initComputeShader(const std::string &filePath) {
 		GLint maxLength = 0;
 		glGetProgramiv(_programID, GL_INFO_LOG_LENGTH, &maxLength);
 		std::vector<char> errorLog(maxLength);
-		glGetShaderInfoLog(_programID, maxLength, &maxLength, &errorLog[0]);
+		glGetProgramInfoLog(_programID, maxLength, &maxLength, &errorLog[0]);
 		glDeleteProgram(_programID);
 		glDeleteShader(_computeShader);
+		std::cout << "Compute shader fucka \n";
 		std::printf("%s\n", &(errorLog[0]));
 	}
 	glDetachShader(_programID, _computeShader);
@@ -64,4 +65,8 @@ void Compute::compileComputeShader(const std::string &filePath, GLuint shaderID)
 		glDeleteShader(shaderID);
 		std::printf("%s\n", &(errorLog[0]));
 	}
+}
+
+GLuint Compute::getProgramID() const {
+	return _programID;
 }
