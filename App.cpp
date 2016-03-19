@@ -44,6 +44,7 @@ void App::init()
 
 	importer->loadObj("models/sphere1.obj");
 	models = importer->CreateTriangleData();
+	models[0]->createBBox("sphere.txt");
 	models[0]->addTranslation(vec3(0,0.5,0));
 	models[0]->initNormalTexture("normalMap.png");
 	delete importer;
@@ -82,8 +83,8 @@ void App::init()
 	for (int i = 0; i < temp.size(); i++) {
 		temp[i]->addTranslation(vec3(i+2,0,0));
 		models.push_back(temp[i]);
-
 	}
+	models[0]->createBBox("box.txt");
 	unsigned char* Pheightmap = nullptr;
 	Model* hm = importer->getGround("height_map2.bmp", Pheightmap);
 	models.push_back(hm);
@@ -120,9 +121,7 @@ void App::initShader() {
 	_wireFrameProgram.linkShaders();
 
 	lights.init("shaders/ShadowVertex.vert", "shaders/ShadowFragment.frag");
-	GLenum err = glGetError();
 	gaussianFilter.initComputeShader("shaders/GaussianFilter.comp");
-	err = glGetError();
 }
 
 void App::createScreenQuad() {

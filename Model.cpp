@@ -1,7 +1,10 @@
 #include "Model.h"
+#include <fstream>
+#include <sstream>
 
 Model::Model(): _VBOid(0), _mat(nullptr), _normalTexture(0) {
 	normalMaping = false;
+	bBox.center = vec3(0, 0, 0);
 }
 
 Model::~Model() {
@@ -31,7 +34,6 @@ void Model::initNormalTexture(const std::string &filePath) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	SOIL_free_image_data(image);
-
 }
 
 void Model::setMaterial(Material* material) {
@@ -94,4 +96,14 @@ void Model::draw(GLuint spID) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Model::createBBox(const std::string &filePath) {
+	std::ifstream file("models/boundbox/" + filePath);	
+	std::string input;
+	std::istringstream inputString;
+	std::getline(file, input);
+	inputString.clear();
+	inputString.str(input);
+	inputString >> bBox.xLeast >> bBox.xMost >> bBox.yLeast >> bBox.yMost >> bBox.zLeast >> bBox.zMost;
 }
