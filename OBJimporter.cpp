@@ -81,9 +81,7 @@ void OBJimporter::loadMaterials(string materials)
 					allMaterials.push_back(mat);
 				}
 				first = false;
-
 				mat->materialName = "";
-
 				mat->materialName = name;
 				mat->texid = 0;
 			}
@@ -182,11 +180,8 @@ void OBJimporter::loadObj(string fileName) {
 }
 std::vector<Model*> OBJimporter::CreateTriangleData()
 {
-
 	TriangleVertex *triangleVertices;
-
 	std::vector<Model*> result;
-
 	Model* model = nullptr;
 
 	int vIndex;
@@ -195,7 +190,6 @@ std::vector<Model*> OBJimporter::CreateTriangleData()
 
 	GLuint vaoid;
 	GLuint buffid;
-
 	for (int o = objectOffset; o < objects.size(); o++) {
 		model = new Model();
 		triangleVertices = new TriangleVertex[objects[o]->faces.size() * 3];
@@ -209,7 +203,6 @@ std::vector<Model*> OBJimporter::CreateTriangleData()
 					textureCoords[tIndex].u, textureCoords[tIndex].v };
 			}
 		}
-		
 		glGenBuffers(1, &buffid);
 		glBindBuffer(GL_ARRAY_BUFFER, buffid);
 		glBufferData(GL_ARRAY_BUFFER, objects[o]->faces.size() * 3 * sizeof(TriangleVertex), triangleVertices, GL_STATIC_DRAW);
