@@ -15,10 +15,7 @@ private:
 	int size;
 	bool normalMaping;
 
-	struct boundingBox {
-		vec3 center = vec3(0,0,0);
-		float xLeast, xMost, yLeast, yMost, zLeast, zMost = 0;
-	} bBox;
+	vec3* bBox;
 public:
 	Model();
 	~Model();
@@ -34,4 +31,5 @@ public:
 	Material* getMat();
 	GLuint getBuffID();
 	int getSize();
+	vec3* getBBox() const;
 };

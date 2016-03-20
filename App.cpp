@@ -84,25 +84,21 @@ void App::init()
 		temp[i]->addTranslation(vec3(i+2,0,0));
 		models.push_back(temp[i]);
 	}
-	models[0]->createBBox("box.txt");
+	models[1]->createBBox("box.txt");
+
 	unsigned char* Pheightmap = nullptr;
 	Model* hm = importer->getGround("height_map2.bmp", Pheightmap);
 	models.push_back(hm);
 	_player.setHM(Pheightmap);
 	delete importer;
 	createScreenQuad();
-
 }
 
 void App::initShader() {
 	testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag", " ");
-
-	testProgram.addAttribute("position");
-	
+	testProgram.addAttribute("position");	
 	testProgram.addAttribute("texturePos");
-
 	testProgram.linkShaders();
-
 	
 	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag", " ");
 	_colorProgram.addAttribute("position");
@@ -192,6 +188,12 @@ void App::render() {
 	}
 	else{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+
+		vec3* snorre = models[0]->getBBox();
+		for (int i = 0; i < 8; i++)
+			std::cout << snorre[i].x << "  " << snorre[i].y << "  " << snorre[i].z << std::endl;
+		std::cout << std::endl;
 
 		_wireFrameProgram.use();
 		_player.matrixUpdate(_wireFrameProgram.getProgramID());

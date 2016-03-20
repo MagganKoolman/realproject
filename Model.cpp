@@ -1,10 +1,11 @@
 #include "Model.h"
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 Model::Model(): _VBOid(0), _mat(nullptr), _normalTexture(0) {
 	normalMaping = false;
-	bBox.center = vec3(0, 0, 0);
+	bBox = new vec3[8];
 }
 
 Model::~Model() {
@@ -12,6 +13,7 @@ Model::~Model() {
 		delete this->_mat;
 	else
 		_mat->pointers--;
+	delete bBox;
 }
 
 void Model::initNormalTexture(const std::string &filePath) {
@@ -61,6 +63,8 @@ int Model::getSize() {
 }
 void Model::addTranslation(glm::vec3 translation) {
 	this->worldMat = glm::translate(worldMat, translation);
+	for (int i = 0; i < 8; i++)
+		bBox[i] = vec3(worldMat * glm::vec4(bBox[i], 1));
 }
 void Model::draw(GLuint spID) {
 	GLuint nMapBool = glGetUniformLocation(spID, "normalMapBool");
@@ -102,8 +106,18 @@ void Model::createBBox(const std::string &filePath) {
 	std::ifstream file("models/boundbox/" + filePath);	
 	std::string input;
 	std::istringstream inputString;
+	float coordinates[6];
 	std::getline(file, input);
 	inputString.clear();
 	inputString.str(input);
-	inputString >> bBox.xLeast >> bBox.xMost >> bBox.yLeast >> bBox.yMost >> bBox.zLeast >> bBox.zMost;
+	inputString >> coordinates[0] >> coordinates[1] >> coordinates[2] >> coordinates[3] >> coordinates[4] >> coordinates[5];
+	int counter = 0;
+	for (int i = 0; i < 2; i++) 
+		for (int j = 2; j < 4; j++)
+			for (int k = 4; k < 6; k++)
+				bBox[counter++] = vec3(coordinates[i], coordinates[j], coordinates[k]);
+}
+
+vec3* Model::getBBox() const {
+	return bBox;
 }
