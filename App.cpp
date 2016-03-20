@@ -29,11 +29,11 @@ void App::init()
 	SDL_GLContext glContext = SDL_GL_CreateContext(window);
 	if (glContext == nullptr)
 		std::cout << "SDLFEL";
-	
+
 	GLenum error = glewInit();
 	if (error != GLEW_OK)
 		std::cout << "GlewFel!";
-	
+
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 	glEnable(GL_DEPTH_TEST);
@@ -45,7 +45,7 @@ void App::init()
 	importer->loadObj("models/sphere1.obj");
 	models = importer->CreateTriangleData();
 	models[0]->createBBox("sphere.txt");
-	models[0]->addTranslation(vec3(0,0.5,0));
+	models[0]->addTranslation(vec3(0, 0.5, 0));
 	models[0]->initNormalTexture("normalMap.png");
 	delete importer;
 
@@ -80,11 +80,9 @@ void App::init()
 
 	importer->loadObj("models/box.obj");
 	temp = importer->CreateTriangleData();
-	for (int i = 0; i < temp.size(); i++) {
-		temp[i]->addTranslation(vec3(i+2,0,0));
-		models.push_back(temp[i]);
-	}
-	models[1]->createBBox("box.txt");
+	temp[0]->createBBox("box.txt");
+	temp[0]->addTranslation(vec3(2,0,0));
+	models.push_back(temp[0]);
 
 	unsigned char* Pheightmap = nullptr;
 	Model* hm = importer->getGround("height_map2.bmp", Pheightmap);
@@ -189,8 +187,7 @@ void App::render() {
 	else{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-
-		vec3* snorre = models[0]->getBBox();
+		vec3* snorre = models[1]->getBBox();
 		for (int i = 0; i < 8; i++)
 			std::cout << snorre[i].x << "  " << snorre[i].y << "  " << snorre[i].z << std::endl;
 		std::cout << std::endl;
