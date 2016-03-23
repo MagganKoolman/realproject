@@ -18,6 +18,7 @@ private:
 	vec3* bBox;
 public:
 	Model();
+	Model(Model &m);
 	~Model();
 
 	void initNormalTexture(const std::string &filePath);
@@ -29,7 +30,7 @@ public:
 	void addTranslation(glm::vec3 translation);
 	void createBBox(const std::string &filePath);
 	Material* getMat();
-	GLuint getBuffID();
+	GLuint getBuffID() const;
 	int getSize();
 	vec3* getBBox() const;
 };

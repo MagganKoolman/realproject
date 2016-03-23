@@ -5,7 +5,23 @@
 
 Model::Model(): _VBOid(0), _mat(nullptr), _normalTexture(0) {
 	normalMaping = false;
-	bBox = new vec3[8];
+	bBox = new vec3[4];
+}
+
+Model::Model(Model &m) {
+	this->_VBOid = m._VBOid;
+	this->_BUFFid = m._BUFFid;
+	this->setMaterial(m._mat);
+	this->_normalTexture = m._normalTexture;
+	this->worldMat = m.worldMat;
+	this->size = m.size;
+	this->normalMaping = m.normalMaping;
+
+	this->bBox = new vec3[4];
+	for (int i = 0; i < 4; i++)
+	{
+		bBox[i] = m.bBox[i];
+	}
 }
 
 Model::~Model() {
@@ -55,7 +71,7 @@ void Model::setSize(int s) {
 Material* Model::getMat() {
 	return this->_mat;
 }
-GLuint Model::getBuffID() {
+GLuint Model::getBuffID() const{
 	return this->_BUFFid;
 }
 int Model::getSize() {
@@ -63,7 +79,7 @@ int Model::getSize() {
 }
 void Model::addTranslation(glm::vec3 translation) {
 	this->worldMat = glm::translate(worldMat, translation);
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 4; i++)
 		bBox[i] = vec3(worldMat * glm::vec4(bBox[i], 1));
 }
 void Model::draw(GLuint spID) {
@@ -113,9 +129,8 @@ void Model::createBBox(const std::string &filePath) {
 	inputString >> coordinates[0] >> coordinates[1] >> coordinates[2] >> coordinates[3] >> coordinates[4] >> coordinates[5];
 	int counter = 0;
 	for (int i = 0; i < 2; i++) 
-		for (int j = 2; j < 4; j++)
 			for (int k = 4; k < 6; k++)
-				bBox[counter++] = vec3(coordinates[i], coordinates[j], coordinates[k]);
+				bBox[counter++] = vec3(coordinates[i], 0, coordinates[k]);
 }
 
 vec3* Model::getBBox() const {

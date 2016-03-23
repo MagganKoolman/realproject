@@ -6,6 +6,7 @@
 #include "OBJimporter.h"
 #include "LightSource.h"
 #include "Compute.h"
+#include "QuadTree.h"
 
 #include <iostream>
 #include <SDL\SDL.h>
@@ -20,6 +21,7 @@ private:
 	SDL_Window* window;
 	
 	Player _player;
+	QuadTree* quadTree;
 	int screen_height;
 	int screen_width;
 

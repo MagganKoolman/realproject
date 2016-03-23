@@ -19,6 +19,7 @@ App::~App()
 		delete models[i];
 	}
 	this->models.clear();
+	delete quadTree;
 }
 
 void App::init()
@@ -40,12 +41,13 @@ void App::init()
 
 	initShader();
 	initGaussTex();
+	
 	importer = new OBJimporter();
 
 	importer->loadObj("models/sphere1.obj");
 	models = importer->CreateTriangleData();
 	models[0]->createBBox("sphere.txt");
-	models[0]->addTranslation(vec3(0, 0.5, 0));
+	models[0]->addTranslation(vec3(5, 2, -5));
 	models[0]->initNormalTexture("normalMap.png");
 	delete importer;
 
@@ -81,15 +83,24 @@ void App::init()
 	importer->loadObj("models/box.obj");
 	temp = importer->CreateTriangleData();
 	temp[0]->createBBox("box.txt");
-	temp[0]->addTranslation(vec3(2,0,0));
+	
+	Model* box2;
+	box2 = new Model(*temp[0]);
+	
+	temp[0]->addTranslation(vec3(3,0,3));
+	box2->addTranslation(vec3(-18, 10, -18));
 	models.push_back(temp[0]);
-
+	models.push_back(box2);
+		
 	unsigned char* Pheightmap = nullptr;
 	Model* hm = importer->getGround("height_map2.bmp", Pheightmap);
 	models.push_back(hm);
 	_player.setHM(Pheightmap);
 	delete importer;
 	createScreenQuad();
+
+	quadTree = new QuadTree(vec3(-20, 0, 20), 40);
+	quadTree->buildTree(models);
 }
 
 void App::initShader() {
@@ -186,11 +197,6 @@ void App::render() {
 	}
 	else{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-		vec3* snorre = models[1]->getBBox();
-		for (int i = 0; i < 8; i++)
-			std::cout << snorre[i].x << "  " << snorre[i].y << "  " << snorre[i].z << std::endl;
-		std::cout << std::endl;
 
 		_wireFrameProgram.use();
 		_player.matrixUpdate(_wireFrameProgram.getProgramID());
