@@ -21,3 +21,7 @@ struct TriangleVertex
 {
 	float x, y, z, nx, ny, nz, u, v;
 };
+
+struct FrustumPoints{
+	glm::vec2 fPoints[4];
+};

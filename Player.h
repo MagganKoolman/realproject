@@ -2,6 +2,7 @@
 #include <SDL/SDL.h>
 #include <gl\glew.h>
 #include <glm\glm.hpp>
+#include "Datastructs.h"
 class Player {
 public:
 	Player();
@@ -18,6 +19,8 @@ private:
 	glm::vec3 _lookat;
 	float _angleHor;
 	float _angleVer;
+
+	FrustumPoints frustum;
 
 	glm::mat4 _perspectiveMat;
 	glm::mat4 _viewMat;

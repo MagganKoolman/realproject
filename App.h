@@ -22,6 +22,7 @@ private:
 	
 	Player _player;
 	QuadTree* quadTree;
+
 	int screen_height;
 	int screen_width;
 
