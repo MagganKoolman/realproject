@@ -19,6 +19,7 @@ App::~App()
 		delete models[i];
 	}
 	this->models.clear();
+	delete quadTree;
 }
 
 void App::init()
@@ -29,62 +30,46 @@ void App::init()
 	SDL_GLContext glContext = SDL_GL_CreateContext(window);
 	if (glContext == nullptr)
 		std::cout << "SDLFEL";
-	
+
 	GLenum error = glewInit();
 	if (error != GLEW_OK)
 		std::cout << "GlewFel!";
-	
+
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 	glEnable(GL_DEPTH_TEST);
 
 	initShader();
 	initGaussTex();
+	
 	importer = new OBJimporter();
 
 	importer->loadObj("models/sphere1.obj");
 	models = importer->CreateTriangleData();
 	models[0]->createBBox("sphere.txt");
-	models[0]->addTranslation(vec3(0,0.5,0));
+	models[0]->addTranslation(vec3(5, 2, -5));
 	models[0]->initNormalTexture("normalMap.png");
 	delete importer;
 
-	//skapa 2dra bollen
-/*
-	Model* boll2 = new Model();
-	Material* tempMat = models[0]->getMat();
-	boll2->setMaterial(tempMat);
-	boll2->setBUFFid(models[0]->getBuffID());
-	boll2->setSize(models[0]->getSize());
-	boll2->addTranslation(vec3(4,0.5,0));
-	models.push_back(boll2);
-
-	//3dje:
-
-	Model* boll3 = new Model();
-	boll3->setMaterial(tempMat);
-	boll3->setBUFFid(models[0]->getBuffID());
-	boll3->setSize(models[0]->getSize());
-	boll3->addTranslation(vec3(0, 0.5, 3));
-	models.push_back(boll3);
-	//4de:
-	Model* boll4 = new Model();
-	boll4->setMaterial(tempMat);
-	boll4->setBUFFid(models[0]->getBuffID());
-	boll4->setSize(models[0]->getSize());
-	boll4->addTranslation(vec3(3, 0.5, 3));
-	models.push_back(boll4);
-	*/
 	importer = new OBJimporter();
 	std::vector<Model*> temp;
 
 	importer->loadObj("models/box.obj");
 	temp = importer->CreateTriangleData();
-	for (int i = 0; i < temp.size(); i++) {
-		temp[i]->addTranslation(vec3(i+2,0,0));
-		models.push_back(temp[i]);
-	}
-	models[0]->createBBox("box.txt");
+	temp[0]->createBBox("box.txt");
+	
+	Model* box2;
+	box2 = new Model(*temp[0]);
+	Model* box3;
+	box3 = new Model(*temp[0]);
+	
+	temp[0]->addTranslation(vec3(3,0,3));
+	box2->addTranslation(vec3(-18, 10, -18));
+	box3->addTranslation(vec3(3, 0, 3));
+	models.push_back(temp[0]);
+	models.push_back(box2);
+	models.push_back(box3);
+		
 	unsigned char* Pheightmap = nullptr;
 	Model* hm = importer->getGround("height_map2.bmp", Pheightmap);
 	models.push_back(hm);
@@ -92,17 +77,15 @@ void App::init()
 	delete importer;
 	createScreenQuad();
 
+	quadTree = new QuadTree(vec3(-25, 0, 25), 50);
+	quadTree->buildTree(models);
 }
 
 void App::initShader() {
 	testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag", " ");
-
-	testProgram.addAttribute("position");
-	
+	testProgram.addAttribute("position");	
 	testProgram.addAttribute("texturePos");
-
 	testProgram.linkShaders();
-
 	
 	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag", " ");
 	_colorProgram.addAttribute("position");
