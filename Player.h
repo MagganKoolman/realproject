@@ -12,10 +12,11 @@ public:
 	void matrixUpdate(const GLuint &shaderProgram);
 	void matrixUpdate2(const GLuint &shaderProgram);
 	void setHM(unsigned char* hm);
+	void updateFrustrum();
+	FrustumPoints getFrustum() const;
 private:
 	glm::mat3x3 _rotY;
 	glm::mat3x3 _rotX;
-	glm::vec3 _position;
 	glm::vec3 _lookat;
 	float _angleHor;
 	float _angleVer;

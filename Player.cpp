@@ -3,17 +3,18 @@
 #include <Windows.h>
 #include "glm\gtx\transform.hpp"
 #include "glm\gtc\matrix_transform.hpp"
+#include "glm\gtx\rotate_vector.hpp"
 
 const float PI = 3.1415f;
 const float halfPI = PI / 2;
 
 Player::Player() {
-	this->_position = { 0,0,0 };
-	this->_lookat = { -1,0, 0 };
+	frustum.position = { 0,0,0 };
+	this->_lookat = { 0,0, 1 };
 	this->_angleHor = 0.01f;
 	this->_angleVer = 0.00f;
 	this->_perspectiveMat = glm::perspective(45.0f, 1080.f / 720.0f, 0.5f, 50.0f);
-	this->_viewMat = glm::lookAt(_position, _lookat, glm::vec3(0, 1, 0));
+	this->_viewMat = glm::lookAt(frustum.position, _lookat, glm::vec3(0, 1, 0));
 }
 
 Player::~Player() {
@@ -21,30 +22,30 @@ Player::~Player() {
 }
 
 void Player::update(float dt, SDL_Window &window) {
-	dt = dt*10;
-	int index = ((int)_position.z + 20) * 200 + (int)_position.x+20;
-	_position.y = heightMap[index*5]/25.0f +0.5f;
+	dt = dt * 10;
+	int index = ((int)frustum.position.z + 20) * 200 + (int)frustum.position.x + 20;
+	frustum.position.y = heightMap[index * 5] / 25.0f + 0.5f;
 	if (GetAsyncKeyState('W')) {
-		_position = _position + glm::vec3(_lookat.x, 0, _lookat.z)*dt;
+		frustum.position = frustum.position + glm::vec3(_lookat.x, 0, _lookat.z)*dt;
 	}
 	if (GetAsyncKeyState('S')) {
-		_position = _position - glm::vec3(_lookat.x, 0, _lookat.z)*dt;
+		frustum.position = frustum.position - glm::vec3(_lookat.x, 0, _lookat.z)*dt;
 	}
 	if (GetAsyncKeyState('A')) {
 		glm::vec3 rightVec = glm::cross(glm::vec3(0, 1, 0), _lookat);
-		_position = _position + rightVec*dt;
+		frustum.position = frustum.position + rightVec*dt;
 	}
 	if (GetAsyncKeyState('D')) {
 		glm::vec3 rightVec = glm::cross(glm::vec3(0, 1, 0), _lookat);
-		_position = _position - rightVec*dt;
+		frustum.position = frustum.position - rightVec*dt;
 	}
 	SDL_Event evnt;
-	while (SDL_PollEvent(&evnt)) {		
+	while (SDL_PollEvent(&evnt)) {
 		if (SDL_MOUSEMOTION == evnt.type) {
 			_angleHor = (520 - evnt.motion.x) * -0.001f;
 			if (std::abs(_angleHor) < 0.002f)
 				_angleHor = 0.0f;
-			
+
 			_angleVer = (360 - evnt.motion.y) * -0.001f;
 			if (std::abs(_angleVer) < 0.002f)
 				_angleVer = 0.0f;
@@ -58,10 +59,24 @@ void Player::update(float dt, SDL_Window &window) {
 	_rotX = { glm::vec3(cosf(_angleHor), 0, sinf(_angleHor)), glm::vec3(0,1,0), glm::vec3(-sinf(_angleHor), 0, cosf(_angleHor)) };
 	_lookat = _rotX*_lookat;
 	_lookat.y -= _angleVer;
+	updateFrustrum();
+	
+}
+
+void Player::updateFrustrum() {
+	glm::vec3 temp(_lookat.x, 0 , _lookat.z);
+	temp = glm::normalize(temp) * 55.f;
+	frustum.left = frustum.position + glm::rotate(temp, 30.0f, glm::vec3(0,1,0));
+	frustum.right = frustum.position + glm::rotate(temp, -30.0f, glm::vec3(0, 1, 0));
+	frustum.right.y = 0;
+	frustum.left.y = 0;
+	frustum.fart = glm::normalize(frustum.left - frustum.right);
+	if (GetAsyncKeyState('P'))
+		std::cout << frustum.right.x << ", "<< frustum.right.y <<", " << frustum.right.z << ")   (" << frustum.left.x << ", " << frustum.left.y << ", " << frustum.left.z << ")\n";
 }
 
 void Player::matrixUpdate(const GLuint &shaderProgram) {
-	_viewMat = glm::lookAt(_position, _position + _lookat, glm::vec3(0, 1, 0));
+	_viewMat = glm::lookAt(frustum.position, frustum.position + _lookat, glm::vec3(0, 1, 0));
 	GLuint camMatrix = glGetUniformLocation(shaderProgram, "Camera");
 	glUniformMatrix4fv(camMatrix, 1, GL_FALSE, &_viewMat[0][0]);
 	
@@ -69,7 +84,7 @@ void Player::matrixUpdate(const GLuint &shaderProgram) {
 	glUniformMatrix4fv(perspMatrix, 1, GL_FALSE, &_perspectiveMat[0][0]);
 	
 	GLuint camPos = glGetUniformLocation(shaderProgram, "cameraPosition");	
-	glUniform3fv(camPos, 1, &_position[0]);
+	glUniform3fv(camPos, 1, &frustum.position[0]);
 }
 
 void Player::matrixUpdate2(const GLuint &shaderProgram) {
@@ -77,11 +92,15 @@ void Player::matrixUpdate2(const GLuint &shaderProgram) {
 	GLuint perspMatrix = glGetUniformLocation(shaderProgram, "invPerspective");
 
 	glm::mat4x4 invPM = glm::inverse(_perspectiveMat * _viewMat);
-	glm::vec3 viewDir = glm::normalize(_lookat - _position);
+	glm::vec3 viewDir = glm::normalize(_lookat - frustum.position);
 	glUniformMatrix4fv(perspMatrix, 1, GL_FALSE, &invPM[0][0]);
-	glUniform3fv(camPos, 1, &_position[0]);
+	glUniform3fv(camPos, 1, &frustum.position[0]);
 }
 
 void Player::setHM(unsigned char* hm) {
 	this->heightMap = hm;
+}
+
+FrustumPoints Player::getFrustum()const {
+	return this->frustum;
 }

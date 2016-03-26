@@ -23,5 +23,5 @@ struct TriangleVertex
 };
 
 struct FrustumPoints{
-	glm::vec2 fPoints[4];
+	glm::vec3 position, right, left, fart;
 };

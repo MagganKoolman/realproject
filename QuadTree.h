@@ -11,19 +11,20 @@ public:
 	QuadTree(glm::vec3 startPos, float sizeOfTree);
 	~QuadTree();
 
-	void checkIntersection(const FrustumPoints &frustum);
+	std::vector<Model*> checkIntersection(const FrustumPoints &frustum);
 	void buildTree(const std::vector<Model*> model);
 private:
-	
 	class Branch {
 	public:
 		Branch(glm::vec3 startPoint, float distance, int id) {
 			points[0] = startPoint;
-			points[1] += startPoint + glm::vec3(distance, 0, -distance);
+			points[1] = startPoint + glm::vec3(distance, 0, 0);
+			points[2] = startPoint + glm::vec3(0, 0, -distance);;
+			points[3] = startPoint + glm::vec3(distance, 0, -distance);
 			levelInTree = 999;
-			id = id;
+			this->id = id;
 			for (int i = 0; i < 4; i++)
-				child[i] = nullptr;			
+				child[i] = nullptr;
 		}
 
 		~Branch() {
@@ -36,38 +37,36 @@ private:
 		
 		bool checkIntersect(const Model* model) {
 			glm::vec3* modelBox = model->getBBox();
-			for (int i = 0; i < 4; i++)
-			{			
-				if (modelBox[i].x > points[0].x && modelBox[i].x < points[1].x && modelBox[i].z > points[1].z && modelBox[i].z < points[0].z)
-					return true;
-			}
-			return false;
+			return !(modelBox[0].x > points[1].x ||
+				modelBox[2].x < points[0].x ||
+				modelBox[0].z > points[0].z||
+				modelBox[3].z < points[2].z);
 		}
 
 		void treeBuilding(std::vector<Model*> modelVector, int levelOfTree) {
 			bool willDivide = false;
-			if (levelOfTree > 0) {
-				levelOfTree--;
+			if (levelOfTree >= 0) {
 				for (int i = 0; i < modelVector.size(); i++)
 				{
 					if (checkIntersect(modelVector[i]))
 					{
 						willDivide = true;
-						if (levelOfTree == 1)
+						if (levelOfTree == 0)
 						{
-							modelNumberVec.push_back(modelVector[i]->getBuffID());
+							modelPointVec.push_back(modelVector[i]);
 							std::cout << modelVector[i]->getBuffID() << "  Modell i trad nr: " << id << std::endl;
 						}
 					}
 				}
-				if (willDivide && levelOfTree != 1)
+				if (willDivide && levelOfTree > 0)
 				{
 					levelInTree = levelOfTree;
 					float distance = abs((points[0].x - points[1].x) / 2);
-					child[0] = new Branch(glm::vec3(points[0].x, 0, points[0].z), distance, levelInTree + 1);
-					child[1] = new Branch(glm::vec3(points[0].x + distance, 0, points[0].z), distance, levelInTree + 2);
-					child[2] = new Branch(glm::vec3(points[0].x, 0, points[0].z - distance), distance, levelInTree + 3);
-					child[3] = new Branch(glm::vec3(points[0].x + distance, 0, points[0].z - distance), distance, levelInTree + 4);
+					child[0] = new Branch(glm::vec3(points[0].x, 0, points[0].z), distance, levelInTree - 1);
+					child[1] = new Branch(glm::vec3(points[0].x + distance, 0, points[0].z), distance, levelInTree);
+					child[2] = new Branch(glm::vec3(points[0].x, 0, points[0].z - distance), distance, levelInTree+1);
+					child[3] = new Branch(glm::vec3(points[0].x + distance, 0, points[0].z - distance), distance, levelInTree+2);
+					levelOfTree--;
 					for (int i = 0; i < 4; i++)
 						child[i]->treeBuilding(modelVector, levelOfTree);
 				}
@@ -75,28 +74,33 @@ private:
 			}
 		}
 
-		void checkInFrustum(const FrustumPoints &frustum) {		
-			for (int i = 0; i < 2; i++)
-			{
-				if (points[0].x > frustum.fPoints[i].x  && points[1].x < frustum.fPoints[i+1].x  && points[1].z > frustum.fPoints[i].y && points[0].z < frustum.fPoints[i+1].y) {
-					if (levelInTree == 0)
+		void checkInFrustum(const glm::vec3 &v1, const glm::vec3 &v2, glm::vec3 &fart, const glm::vec3 &position, const float &angle, const float &angle2, std::vector<Model*> &modelsToDraw) {
+			bool found = false;		
+			vec3 la = glm::normalize(v1 + v2);
+			for (int i = 0; i < 4 && !found; i++) {
+				vec3 vTarget = glm::normalize(points[i] - position);
+				vec3 vTarget2 = glm::normalize(points[i] - (position + v2));
+				if (glm::length(vTarget) < 50.0 && glm::dot(la,vTarget) > 0) {
+					if (!(angle > acosf(glm::dot(vTarget, v2)) && angle2 > acosf(glm::dot(vTarget2, fart))))
 					{
-						for (int j = 0; j < modelNumberVec.size(); j++);
-						//add to models to be drawn
-						return;
-					}
-					else {
-						for (int x = 0; x < 4; x++) {
-							child[i]->checkInFrustum(frustum);
+						found = true;
+						if (child[0] == nullptr)
+						{
+							for (int j = 0; j < modelPointVec.size(); j++)
+							{
+								modelsToDraw.push_back(modelPointVec[j]);
+							}
 						}
+						else
+							for (int x = 0; x < 4; x++)
+								child[x]->checkInFrustum(v1, v2, fart, position, angle, angle2, modelsToDraw);
 					}
 				}
 			}
 		}
-
 		Branch* child[4];
-		glm::vec3 points[2];
-		std::vector<GLuint> modelNumberVec;
+		glm::vec3 points[4];
+		std::vector<Model*> modelPointVec;
 		int levelInTree, id;
 	};
 	Branch* root;

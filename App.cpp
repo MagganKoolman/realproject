@@ -1,5 +1,6 @@
 #include "App.h"
 #include <cstddef>
+#include <algorithm> 
 
 struct ScreenVertex {
 	float x, y, s, t;
@@ -65,13 +66,14 @@ void App::init()
 	
 	temp[0]->addTranslation(vec3(3,0,3));
 	box2->addTranslation(vec3(-18, 10, -18));
-	box3->addTranslation(vec3(3, 0, 3));
+	box3->addTranslation(vec3(10, 3, -3));
 	models.push_back(temp[0]);
 	models.push_back(box2);
 	models.push_back(box3);
 		
 	unsigned char* Pheightmap = nullptr;
 	Model* hm = importer->getGround("height_map2.bmp", Pheightmap);
+	hm->createBBox("terrain.txt");
 	models.push_back(hm);
 	_player.setHM(Pheightmap);
 	delete importer;
@@ -127,6 +129,31 @@ void App::update(float deltaTime){
 	render();
 }
 
+void App::deferredDraw() {
+	_deferredProgram.use();
+	_player.matrixUpdate(_deferredProgram.getProgramID());
+
+	std::vector<Model*> modelsToBeDrawn = quadTree->checkIntersection(_player.getFrustum());
+	std::sort(modelsToBeDrawn.begin(), modelsToBeDrawn.begin() + modelsToBeDrawn.size());
+	Model* lastModelDrawn = nullptr;
+	int x = 0;
+	for (int i = 0; i < modelsToBeDrawn.size(); i++)
+	{
+		if (lastModelDrawn != modelsToBeDrawn[i])
+		{
+			modelsToBeDrawn[i]->draw(_deferredProgram.getProgramID());
+			x++;
+		}
+		lastModelDrawn = modelsToBeDrawn[i];
+	}
+	std::cout << x << std::endl;
+
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(2.0f, 4.0f);
+	_deferredProgram.unUse();
+
+}
+
 void App::render() {
 	
 	lights.shadowShader.use();
@@ -138,16 +165,7 @@ void App::render() {
 	
 	if (!GetAsyncKeyState('Q'))
 	{
-		_deferredProgram.use();
-		_player.matrixUpdate(_deferredProgram.getProgramID());
-		for (int i = 0; i < models.size(); i++) {
-			models[i]->draw(_deferredProgram.getProgramID());
-		}
-
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(2.0f, 4.0f);
-		_deferredProgram.unUse();
-
+		deferredDraw();
 		if (GetAsyncKeyState('E'))
 		{
 			gaussiate();
@@ -175,9 +193,10 @@ void App::render() {
 	}
 	else{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+		
 		_wireFrameProgram.use();
 		_player.matrixUpdate(_wireFrameProgram.getProgramID());
+
 		for (int i = 0; i < models.size(); i++) {
 			models[i]->draw(_wireFrameProgram.getProgramID());
 		}

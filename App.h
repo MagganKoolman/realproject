@@ -32,6 +32,7 @@ private:
 	void createScreenQuad();
 	void drawOnScreenQuad();
 	void gaussiate();
+	void deferredDraw();
 
 	std::vector<Model*> models;
 	OBJimporter* importer;
