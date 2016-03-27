@@ -14,13 +14,14 @@ public:
 	void setHM(unsigned char* hm);
 	void updateFrustrum();
 	FrustumPoints getFrustum() const;
+	glm::vec3 _lookat;
 private:
 	glm::mat3x3 _rotY;
 	glm::mat3x3 _rotX;
-	glm::vec3 _lookat;
+	
 	float _angleHor;
 	float _angleVer;
-
+	glm::vec3 position;
 	FrustumPoints frustum;
 
 	glm::mat4 _perspectiveMat;

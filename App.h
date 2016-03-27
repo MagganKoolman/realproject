@@ -35,6 +35,7 @@ private:
 	void deferredDraw();
 
 	std::vector<Model*> models;
+	Model* terrain;
 	OBJimporter* importer;
 
 	GLuint screen;

@@ -20,6 +20,7 @@ App::~App()
 		delete models[i];
 	}
 	this->models.clear();
+	delete terrain;
 	delete quadTree;
 }
 
@@ -73,8 +74,7 @@ void App::init()
 		
 	unsigned char* Pheightmap = nullptr;
 	Model* hm = importer->getGround("height_map2.bmp", Pheightmap);
-	hm->createBBox("terrain.txt");
-	models.push_back(hm);
+	this->terrain = hm;
 	_player.setHM(Pheightmap);
 	delete importer;
 	createScreenQuad();
@@ -133,7 +133,7 @@ void App::deferredDraw() {
 	_deferredProgram.use();
 	_player.matrixUpdate(_deferredProgram.getProgramID());
 
-	std::vector<Model*> modelsToBeDrawn = quadTree->checkIntersection(_player.getFrustum());
+	std::vector<Model*> modelsToBeDrawn = quadTree->checkIntersection(_player.getFrustum(), _player._lookat);
 	std::sort(modelsToBeDrawn.begin(), modelsToBeDrawn.begin() + modelsToBeDrawn.size());
 	Model* lastModelDrawn = nullptr;
 	int x = 0;
@@ -147,7 +147,7 @@ void App::deferredDraw() {
 		lastModelDrawn = modelsToBeDrawn[i];
 	}
 	std::cout << x << std::endl;
-
+	this->terrain->draw(_deferredProgram.getProgramID());
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(2.0f, 4.0f);
 	_deferredProgram.unUse();
