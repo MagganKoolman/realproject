@@ -72,6 +72,13 @@ void App::init()
 	models.push_back(box2);
 	models.push_back(box3);
 		
+	Model* boxTemplate;
+	for (int i = 0; i < 2000; i++) {
+		boxTemplate = new Model(*models[0]);
+		boxTemplate->addTranslation(vec3(i % 40 - 20, 5, (int)(i/40)-20));
+		models.push_back(boxTemplate);
+	}
+
 	unsigned char* Pheightmap = nullptr;
 	Model* hm = importer->getGround("height_map2.bmp", Pheightmap);
 	this->terrain = hm;
