@@ -80,31 +80,6 @@ private:
 			}
 		}
 
-		void checkInFrustum(const glm::vec3 &v1, const glm::vec3 &v2, glm::vec3 &fart, const glm::vec3 &position, const float &angle, const float &angle2, std::vector<Model*> &modelsToDraw) {
-			bool found = false;		
-			vec3 la = glm::normalize(v1 + v2);
-			for (int i = 0; i < 4 && !found; i++) {
-				vec3 vTarget = glm::normalize(points[i] - position);
-				vec3 vTarget2 = glm::normalize(points[i] - (position + v2));
-				if (glm::length(vTarget) < 50.0 && glm::dot(la,vTarget) > 0) {
-					if (!(angle > acosf(glm::dot(vTarget, v2)) && angle2 > acosf(glm::dot(vTarget2, fart))))
-					{
-						found = true;
-						if (child[0] == nullptr)
-						{
-							for (int j = 0; j < modelPointVec.size(); j++)
-							{
-								modelsToDraw.push_back(modelPointVec[j]);
-							}
-						}
-						else
-							for (int x = 0; x < 4; x++)
-								child[x]->checkInFrustum(v1, v2, fart, position, angle, angle2, modelsToDraw);
-					}
-				}
-			}
-		}
-
 		void checkInFrustum2(std::vector<Model*> &modelsToDraw, const glm::vec3 &nearNormal, const glm::vec3 &leftNormal, const glm::vec3 &rightNormal, const glm::vec3 &position) {
 			bool found = false;
 			for (int i = 0; i < 4 && !found; i++) {

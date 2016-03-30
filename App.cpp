@@ -73,9 +73,9 @@ void App::init()
 	models.push_back(box3);
 		
 	Model* boxTemplate;
-	for (int i = 0; i < 2000; i++) {
+	for (int i = 0; i < 20; i++) {
 		boxTemplate = new Model(*models[0]);
-		boxTemplate->addTranslation(vec3(i % 40 - 20, 5, (int)(i/40)-20));
+		boxTemplate->addTranslation(vec3(i * 4, 2, 3));
 		models.push_back(boxTemplate);
 	}
 
