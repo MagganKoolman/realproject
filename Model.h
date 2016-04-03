@@ -28,6 +28,7 @@ public:
 	void setSize(int s);
 	void draw(GLuint spID);
 	void addTranslation(glm::vec3 translation);
+	void Scale(glm::vec3 scale);
 	void createBBox(const std::string &filePath);
 	Material* getMat();
 	GLuint getBuffID() const;

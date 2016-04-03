@@ -136,3 +136,8 @@ void Model::createBBox(const std::string &filePath) {
 vec3* Model::getBBox() const {
 	return bBox;
 }
+void Model::Scale(glm::vec3 scale) {
+	this->worldMat = glm::scale(worldMat, scale);
+	for (int i = 0; i < 4; i++)
+		bBox[i] = vec3(worldMat * glm::vec4(bBox[i], 1));
+}

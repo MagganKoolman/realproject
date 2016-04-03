@@ -38,7 +38,7 @@ void App::init()
 		std::cout << "GlewFel!";
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
+	glClearColor(0.7f, 0.7f, 1.0f, 1.0);
 	glEnable(GL_DEPTH_TEST);
 
 	initShader();
@@ -54,8 +54,19 @@ void App::init()
 	delete importer;
 
 	importer = new OBJimporter();
-	std::vector<Model*> temp;
 
+	std::vector<Model*> xxx;
+	importer->loadObj("models/skyBox.obj");
+	xxx = importer->CreateTriangleData();
+	xxx[0]->createBBox("box.txt");
+	xxx[0]->addTranslation(vec3(0, 19, 0));
+	xxx[0]->Scale(vec3(40,40,40));
+	models.push_back(xxx[0]);
+
+	delete importer;
+	importer = new OBJimporter();
+
+	std::vector<Model*> temp;
 	importer->loadObj("models/box.obj");
 	temp = importer->CreateTriangleData();
 	temp[0]->createBBox("box.txt");
@@ -73,11 +84,17 @@ void App::init()
 	models.push_back(box3);
 		
 	Model* boxTemplate;
-	for (int i = 0; i < 2000; i++) {
+	/*for (int i = 0; i < 2000; i++) {
 		boxTemplate = new Model(*models[0]);
 		boxTemplate->addTranslation(vec3(i % 40 - 20, 5, (int)(i/40)-20));
 		models.push_back(boxTemplate);
 	}
+
+	for (int i = 0; i < 2000; i++) {
+		boxTemplate = new Model(*temp[0]);
+		boxTemplate->addTranslation(vec3(i % 40 - 20, 3, (int)(i / 40) - 20));
+		models.push_back(boxTemplate);
+	}*/
 
 	unsigned char* Pheightmap = nullptr;
 	Model* hm = importer->getGround("height_map2.bmp", Pheightmap);
@@ -134,6 +151,7 @@ void App::update(float deltaTime){
 	_player.update(deltaTime, *window);
 	this->lights.updatePosition(deltaTime);
 	render();
+	std::cout << 1 / deltaTime << std::endl;
 }
 
 void App::deferredDraw() {
@@ -153,7 +171,7 @@ void App::deferredDraw() {
 		}
 		lastModelDrawn = modelsToBeDrawn[i];
 	}
-	std::cout << x << std::endl;
+	std::cout << x << "  ";
 	this->terrain->draw(_deferredProgram.getProgramID());
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(2.0f, 4.0f);
