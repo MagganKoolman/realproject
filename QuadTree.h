@@ -58,10 +58,7 @@ private:
 					{
 						willDivide = true;
 						if (levelOfTree == 0)
-						{
 							modelPointVec.push_back(modelVector[i]);
-							std::cout << modelVector[i]->getBuffID() << "  Modell i trad nr: " << id << std::endl;
-						}
 					}
 				}
 				if (willDivide && levelOfTree > 0)
@@ -75,8 +72,7 @@ private:
 					levelOfTree--;
 					for (int i = 0; i < 4; i++)
 						child[i]->treeBuilding(modelVector, levelOfTree);
-				}
-				
+				}			
 			}
 		}
 
@@ -108,5 +104,4 @@ private:
 		int id;
 	};
 	Branch* root;
-
 };

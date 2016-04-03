@@ -107,12 +107,7 @@ void App::init()
 	quadTree->buildTree(models);
 }
 
-void App::initShader() {
-	testProgram.compileShaders("shaders/testVertex.vert", "shaders/testFragment.frag", " ");
-	testProgram.addAttribute("position");	
-	testProgram.addAttribute("texturePos");
-	testProgram.linkShaders();
-	
+void App::initShader() {	
 	_colorProgram.compileShaders("shaders/ColorShader.vert", "shaders/ColorShader.frag", " ");
 	_colorProgram.addAttribute("position");
 	_colorProgram.addAttribute("texturePos");

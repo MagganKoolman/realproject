@@ -16,18 +16,18 @@ void GLSLprogram::compileShaders(const std::string& vertexPath, const std::strin
 	_programID = glCreateProgram();
 	_vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	if (_vertexShader == 0) {
-		std::cout << "Vertex shader fucka!";
+		std::cout << "Vertex shader problem";
 	}
 	_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	if (_fragmentShader == 0) {
-		std::cout << "Fragment shader fucka!";
+		std::cout << "Fragment shader problem!";
 	}
 	compileShader(vertexPath, _vertexShader);
 	if (geometryPath != " ")
 	{
 		_geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
 		if (_geometryShader == 0) {
-			std::cout << "Geometry shader fucka!";
+			std::cout << "Geometry shader problem!";
 		}
 		compileShader(geometryPath, _geometryShader);
 	}
@@ -37,7 +37,7 @@ void GLSLprogram::compileShaders(const std::string& vertexPath, const std::strin
 void GLSLprogram::compileShader(const std::string& filePath, GLuint shaderID) {
 	std::ifstream shaderFile(filePath);
 	if (shaderFile.fail()) {
-		std::cout << "Fil fucka: " + filePath;
+		std::cout << "Fil fel: " + filePath;
 	}
 	std::string fileContent = "";
 	std::string line;
@@ -253,37 +253,4 @@ GLuint GLSLprogram::getTexture5() const
 GLuint GLSLprogram::getProgramID() const
 {
 	return this->_programID;
-}
-
-
-void GLSLprogram::initNormalMap(std::string filename) {
-	glEnable(GL_TEXTURE_2D);
-
-
-	unsigned char* image;
-	int width, height;
-	glGenTextures(1, &_normalMap);
-
-	GLuint texLocation = glGetUniformLocation(this->_programID, "normalMap");
-
-	glActiveTexture(GL_TEXTURE6);
-	glBindTexture(GL_TEXTURE_2D, _normalMap);
-
-	image = SOIL_load_image(("models/" + filename).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	SOIL_free_image_data(image);
-
-}
-
-void GLSLprogram::enableNormalMap() {
-	GLuint texLocation = glGetUniformLocation(this->_programID, "normalMap");
-	glActiveTexture(GL_TEXTURE6);
-	glUniform1i(texLocation, 6);
-	glBindTexture(GL_TEXTURE_2D, _normalMap);
 }
